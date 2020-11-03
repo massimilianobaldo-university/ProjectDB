@@ -8,7 +8,7 @@ aerei.
 
 - Ogni aeroporto sia identificato univocamente da un codice e sia caratterizzato da un nome, da una
 città e da una nazione. Si assuma che in una data città non vi possano essere due aeroporti con lo
-stesso nome (e che ogni citt`a sia identificata univocamente dal nome).
+stesso nome (e che ogni città sia identificata univocamente dal nome).
 - Ogni tipo di aeroplano sia identificato dal nome e sia caratterizzato dal nome dell’azienda costruttrice,
 dal numero massimo di posti a sedere e dall’autonomia di volo.
 - Ogni aeroplano sia identificato da un codice e sia caratterizzato dal tipo (di aeroplano) e dal numero
