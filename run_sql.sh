@@ -1,4 +1,4 @@
-nOfParamsNeeded=2
+nOfParamsNeeded=3
 
 if test $# -lt $nOfParamsNeeded
 then
