@@ -1,3 +1,6 @@
+-- connect to db
+\c progettobasididatidb;
+
 start transaction;
 
 set constraints all deferred;
@@ -108,7 +111,7 @@ VALUES
 (30, 100, 'CCC22');
 
 INSERT INTO TipoDiAeroplano
-(nome, azienda_costruttrice, numero_massimo_posti, autonomia_di_volo)
+(nome, azienda_costruttrice, numero_posti_massimo, autonomia_di_volo)
 VALUES
 ('AAA00', 'Fiat',       250, 18),
 ('BBB11', 'Mercedes',   300, 20),
@@ -125,19 +128,19 @@ VALUES
 ('CCC22', 4444);
 
 INSERT INTO Aeroporto
-(codice, nome, città, nazione)
+(codice, nome, citta, nazione)
 VALUES
 (1111, 'Malpensa',          'Milano',       'Italia'),
 (2222, 'Orio al serio',     'Milano',       'Italia'),
 (3333, 'xxx',               'Milano',       'Italia'),
-(1111, 'yyy',               'Roma',         'Italia'),
-(1111, 'zzz',               'Francoforte',  'Germania');
+(4444, 'yyy',               'Roma',         'Italia'),
+(5555, 'zzz',               'Francoforte',  'Germania');
 
 INSERT INTO Tratta
 (id, orario_previsto_arrivo, orario_previsto_partenza, aeroporto_arrivo, aeroporto_partenza)
 VALUES
-(100, '12:00', '22:00', 1111, 5555, 'Alitalia'),
-(101, '06:00', '09:00', 2222, 3333, 'Ryanair'),
-(102, '17:00', '20:00', 3333, 4444, 'AirFrance');
+(100, '12:00', '22:00', 1111, 5555),
+(101, '06:00', '09:00', 2222, 3333),
+(102, '17:00', '20:00', 3333, 4444);
 
 commit;
