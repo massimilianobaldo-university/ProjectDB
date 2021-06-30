@@ -16,7 +16,7 @@ CREATE TABLE Cliente(
 
 CREATE TABLE Prenotazione(
     codice integer primary key,
-    cliente char(15) not null,  -- FK: Cliente.codice_fiscale
+    cliente char(16) not null,  -- FK: Cliente.codice_fiscale
     volo integer not null,      -- FK: ClasseDiVolo.volo
     classe integer not null     -- FK: ClasseDiVolo.classe
 );
@@ -25,7 +25,7 @@ CREATE TABLE Prenotazione_IstanzaDiTratta(
     codice_prenotazione integer not null,   -- FK: Prenotazione.codice
     data_istanza_tratta date not null,      -- FK: IstanzaDiTratta.data_istanza
     tratta integer,                         -- FK: IstanzaDiTratta.tratta
-    posto_prenotato varchar(4) not null,
+    posto_prenotato varchar(3) not null,
     primary key(codice_prenotazione, data_istanza_tratta, tratta)
 );
 
