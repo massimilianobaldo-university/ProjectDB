@@ -131,10 +131,10 @@ INSERT INTO Aeroporto
 (codice, nome, citta, nazione)
 VALUES
 (1111, 'Malpensa',          'Milano',       'Italia'),
-(2222, 'Orio al serio',     'Milano',       'Italia'),
-(3333, 'xxx',               'Milano',       'Italia'),
-(4444, 'yyy',               'Roma',         'Italia'),
-(5555, 'zzz',               'Francoforte',  'Germania');
+(2222, 'Orio al serio',     'Bergamo',      'Italia'),
+(3333, 'Linate',            'Milano',       'Italia'),
+(4444, 'Fiumicino',         'Roma',         'Italia'),
+(5555, 'Heathrow',          'Londra',       'Inghilterra');
 
 INSERT INTO Tratta
 (id, orario_previsto_arrivo, orario_previsto_partenza, aeroporto_arrivo, aeroporto_partenza)
