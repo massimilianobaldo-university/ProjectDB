@@ -6,17 +6,22 @@ create database progettobasididatidb;
 
 start transaction;
 
+-- domains 
+CREATE dom_cf AS char(16);
+CREATE dom_telefono AS text
+   CONSTRAINT valid_taxon_id check (value ~ '^\d+$');
+
 -- start of table creation
 CREATE TABLE Cliente(
-    codice_fiscale char(16) primary key,
+    codice_fiscale dom_cf primary key,
     nome varchar(50) not null,
     cognome varchar(50) not null,
-    telefono bigint
+    telefono dom_telefono
 );
 
 CREATE TABLE Prenotazione(
     codice integer primary key,
-    cliente char(16) not null,  -- FK: Cliente.codice_fiscale
+    cliente dom_cf not null,  -- FK: Cliente.codice_fiscale
     volo integer not null,      -- FK: ClasseDiVolo.volo
     classe integer not null     -- FK: ClasseDiVolo.classe
 );
