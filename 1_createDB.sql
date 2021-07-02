@@ -10,25 +10,32 @@ start transaction;
 CREATE dom_codice_fiscale AS char(16);
 
 CREATE dom_telefono AS text
-   CONSTRAINT valid_dom_telefono check (value ~ '^[0-9]+$');
+   CONSTRAINT valid_dom_telefono 
+   CHECK (value ~ '^[0-9]+$');
 
 CREATE dom_codice_prenotazione AS text
-   CONSTRAINT valid_dom_codice_prenotazione check (value ~ '^[0-9]+$');
+   CONSTRAINT valid_dom_codice_prenotazione 
+   CHECK (value ~ '^[0-9]+$');
 
 CREATE dom_codice_tratta AS text
-   CONSTRAINT valid_dom_codice_tratta check (value ~ '^[0-9]+$');
+   CONSTRAINT valid_dom_codice_tratta 
+   CHECK (value ~ '^[0-9]+$');
    
 CREATE dom_codice_aeroporto AS char(3)
-   CONSTRAINT valid_dom_codice_aeroporto check (value ~ '^[A-Z]+$');
+   CONSTRAINT valid_dom_codice_aeroporto 
+   CHECK (value ~ '^[A-Z]+$');
 
 CREATE dom_posto_aereo AS varchar(3)
-   CONSTRAINT valid_dom_dom_posto_aereo check (value ~ '^[0-9]{1,2}[A-Z]$');
+   CONSTRAINT valid_dom_dom_posto_aereo 
+   CHECK (value ~ '^[0-9]{1,2}[A-Z]$');
    
 CREATE dom_codice_volo AS varchar(6)
-   CONSTRAINT valid_dom_codice_volo check (value ~ '^[A-Z]{1,2}[0-9]{2,4}$');
+   CONSTRAINT valid_dom_codice_volo 
+   CHECK (value ~ '^[A-Z]{1,2}[0-9]{2,4}$');
    
 CREATE dom_tipo_aeroplano AS varchar(6)
-   CONSTRAINT valid_dom_tipo_aeroplano check (value ~ '^[A-Z]{0,3}[0-9]{2,3}$');
+   CONSTRAINT valid_dom_tipo_aeroplano 
+   CHECK (value ~ '^[A-Z]{0,3}[0-9]{2,3}$');
 
 CREATE dom_compagnia_aerea AS text;
 
