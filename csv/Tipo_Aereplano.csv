@@ -1,20 +1,20 @@
-Airplane_type_name, Max_seats, Company
-A320, 180, Airbus
-A319, 156, Airbus
-A321, 236, Airbus
-A332, 200, Airbus
-707, 189, Boeing
-737, 124, Boeing
-747, 550, Boeing
-757, 228, Boeing
-727, 189, Boeing
-767, 290, Boeing
-777, 440, Boeing
-787, 323, Boeing
-ERJ145, 50, Embraer
-190, 114, Embraer
-170, 80, Embraer
-CRJ440, 44, Bombardier
-CRJ100, 50, Bombardier
-CRJ700, 78, Bombardier
-MD80, 166, McDonnell-Douglas
+Airplane_type_name, Max_seats, Company, Autonomia_di_volo
+A320, 180, Airbus, 20
+A319, 156, Airbus, 11
+A321, 236, Airbus, 10
+A332, 200, Airbus, 9
+707, 189, Boeing, 17
+737, 124, Boeing, 17
+747, 550, Boeing, 8
+757, 228, Boeing, 18
+727, 189, Boeing, 23
+767, 290, Boeing, 12
+777, 440, Boeing, 4
+787, 323, Boeing, 1
+ERJ145, 50, Embraer, 22
+190, 114, Embraer, 18
+170, 80, Embraer, 21
+CRJ440, 44, Bombardier, 0
+CRJ100, 50, Bombardier, 9
+CRJ700, 78, Bombardier, 17
+MD80, 166, McDonnell-Douglas, 21
