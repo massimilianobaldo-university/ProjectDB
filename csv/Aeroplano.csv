@@ -1,4 +1,4 @@
-Airplane_id, Total_number_of_seats, Airplane_type
+codice, numero_posti, tipo_aeroplano
 1, 180, A320
 2, 175, A320
 3, 156, A319

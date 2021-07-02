@@ -141,7 +141,7 @@ CREATE TABLE Aeroporto(
     codice dom_codice_aeroporto primary key,
     nome varchar(50) not null,
     citta varchar(50) not null,
-    nazione varchar(50) not null
+    nazione char(2) not null
 );
 
 CREATE TABLE Tratta(
