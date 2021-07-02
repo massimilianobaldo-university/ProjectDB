@@ -10,7 +10,8 @@ ADD CONSTRAINT fk__prenotazione__cliente
 FOREIGN KEY (cliente)
 REFERENCES Cliente(codice_fiscale);
 
-ALTER TABLE Prenotazione ALTER CONSTRAINT fk__prenotazione__cliente
+ALTER TABLE Prenotazione 
+ALTER CONSTRAINT fk__prenotazione__cliente
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE Prenotazione
@@ -18,7 +19,8 @@ ADD CONSTRAINT fk__prenotazione__volo
 FOREIGN KEY (volo, classe)
 REFERENCES ClasseDiVolo(volo, classe);
 
-ALTER TABLE Prenotazione ALTER CONSTRAINT fk__prenotazione__volo
+ALTER TABLE Prenotazione 
+ALTER CONSTRAINT fk__prenotazione__volo
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK IstanzaDiTratta
@@ -27,7 +29,8 @@ ADD CONSTRAINT fk__istanzaditratta__tratta
 FOREIGN KEY (tratta)
 REFERENCES Tratta(id);
 
-ALTER TABLE IstanzaDiTratta ALTER CONSTRAINT fk__istanzaditratta__tratta
+ALTER TABLE IstanzaDiTratta 
+ALTER CONSTRAINT fk__istanzaditratta__tratta
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE IstanzaDiTratta
@@ -35,7 +38,8 @@ ADD CONSTRAINT fk__istanzaditratta__aeroplano
 FOREIGN KEY (aeroplano)
 REFERENCES Aeroplano(codice);
 
-ALTER TABLE IstanzaDiTratta ALTER CONSTRAINT fk__istanzaditratta__aeroplano
+ALTER TABLE IstanzaDiTratta 
+ALTER CONSTRAINT fk__istanzaditratta__aeroplano
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK ClasseDiVolo
@@ -44,7 +48,8 @@ ADD CONSTRAINT fk__classedivolo__classe
 FOREIGN KEY (classe)
 REFERENCES ClassePossibile(priorita);
 
-ALTER TABLE ClasseDiVolo ALTER CONSTRAINT fk__classedivolo__classe
+ALTER TABLE ClasseDiVolo 
+ALTER CONSTRAINT fk__classedivolo__classe
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE ClasseDiVolo
@@ -52,7 +57,8 @@ ADD CONSTRAINT fk__classedivolo__volo
 FOREIGN KEY (volo)
 REFERENCES Volo(codice);
 
-ALTER TABLE ClasseDiVolo ALTER CONSTRAINT fk__classedivolo__volo
+ALTER TABLE ClasseDiVolo 
+ALTER CONSTRAINT fk__classedivolo__volo
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK Volo
@@ -61,7 +67,8 @@ ADD CONSTRAINT fk__volo__compagniaaerea
 FOREIGN KEY (compagnia_aerea)
 REFERENCES CompagniaAerea(nome);
 
-ALTER TABLE Volo ALTER CONSTRAINT fk__volo__compagniaaerea
+ALTER TABLE Volo 
+ALTER CONSTRAINT fk__volo__compagniaaerea
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK GiorniDellaSettimana_Volo
@@ -70,7 +77,8 @@ ADD CONSTRAINT fk__giornidellasettimana_volo__giorno_settimana
 FOREIGN KEY (giorno_settimana)
 REFERENCES GiorniDellaSettimana(nome);
 
-ALTER TABLE GiorniDellaSettimana_Volo ALTER CONSTRAINT fk__giornidellasettimana_volo__giorno_settimana
+ALTER TABLE GiorniDellaSettimana_Volo 
+ALTER CONSTRAINT fk__giornidellasettimana_volo__giorno_settimana
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE GiorniDellaSettimana_Volo
@@ -78,7 +86,8 @@ ADD CONSTRAINT fk__giornidellasettimana_volo__giorno_volo
 FOREIGN KEY (volo)
 REFERENCES Volo(codice);
 
-ALTER TABLE GiorniDellaSettimana_Volo ALTER CONSTRAINT fk__giornidellasettimana_volo__giorno_volo
+ALTER TABLE GiorniDellaSettimana_Volo 
+ALTER CONSTRAINT fk__giornidellasettimana_volo__giorno_volo
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK Volo_Tratta
@@ -87,7 +96,8 @@ ADD CONSTRAINT fk__volo_tratta__tratta
 FOREIGN KEY (tratta)
 REFERENCES Tratta(id);
 
-ALTER TABLE Volo_Tratta ALTER CONSTRAINT fk__volo_tratta__tratta
+ALTER TABLE Volo_Tratta 
+ALTER CONSTRAINT fk__volo_tratta__tratta
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE Volo_Tratta
@@ -95,7 +105,8 @@ ADD CONSTRAINT fk__volo_tratta__volo
 FOREIGN KEY (volo)
 REFERENCES Volo(codice);
 
-ALTER TABLE Volo_Tratta ALTER CONSTRAINT fk__volo_tratta__volo
+ALTER TABLE Volo_Tratta 
+ALTER CONSTRAINT fk__volo_tratta__volo
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK CompagniaAerea_Aeroplano
@@ -104,7 +115,8 @@ ADD CONSTRAINT fk__compagniaaerea_aeroplano__compagniaaerea
 FOREIGN KEY (compagnia_aerea)
 REFERENCES CompagniaAerea(nome);
 
-ALTER TABLE CompagniaAerea_Aeroplano ALTER CONSTRAINT fk__compagniaaerea_aeroplano__compagniaaerea
+ALTER TABLE CompagniaAerea_Aeroplano 
+ALTER CONSTRAINT fk__compagniaaerea_aeroplano__compagniaaerea
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE CompagniaAerea_Aeroplano
@@ -112,7 +124,8 @@ ADD CONSTRAINT fk__compagniaaerea_aeroplano__aeroplano
 FOREIGN KEY (aeroplano)
 REFERENCES Aeroplano(codice);
 
-ALTER TABLE CompagniaAerea_Aeroplano ALTER CONSTRAINT fk__compagniaaerea_aeroplano__aeroplano
+ALTER TABLE CompagniaAerea_Aeroplano 
+ALTER CONSTRAINT fk__compagniaaerea_aeroplano__aeroplano
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK Aeroplano
@@ -121,7 +134,8 @@ ADD CONSTRAINT fk__aeroplano__tipoaeroplano
 FOREIGN KEY (tipo_aeroplano)
 REFERENCES TipoDiAeroplano(nome);
 
-ALTER TABLE Aeroplano ALTER CONSTRAINT fk__aeroplano__tipoaeroplano
+ALTER TABLE Aeroplano 
+ALTER CONSTRAINT fk__aeroplano__tipoaeroplano
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK PuoDecollare
@@ -130,7 +144,8 @@ ADD CONSTRAINT fk__puodecollare__tipoaeroplano
 FOREIGN KEY (tipo_aeroplano)
 REFERENCES TipoDiAeroplano(nome);
 
-ALTER TABLE PuoDecollare ALTER CONSTRAINT fk__puodecollare__tipoaeroplano
+ALTER TABLE PuoDecollare 
+ALTER CONSTRAINT fk__puodecollare__tipoaeroplano
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE PuoDecollare
@@ -138,7 +153,8 @@ ADD CONSTRAINT fk__puodecollare__aeroporto
 FOREIGN KEY (aeroporto)
 REFERENCES Aeroporto(codice);
 
-ALTER TABLE PuoDecollare ALTER CONSTRAINT fk__puodecollare__aeroporto
+ALTER TABLE PuoDecollare 
+ALTER CONSTRAINT fk__puodecollare__aeroporto
 DEFERRABLE INITIALLY DEFERRED;
 
 -- FK Tratta
@@ -147,7 +163,8 @@ ADD CONSTRAINT fk__tratta__aeroportopartenza
 FOREIGN KEY (aeroporto_partenza)
 REFERENCES Aeroporto(codice);
 
-ALTER TABLE Tratta ALTER CONSTRAINT fk__tratta__aeroportopartenza
+ALTER TABLE Tratta 
+ALTER CONSTRAINT fk__tratta__aeroportopartenza
 DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE Tratta
@@ -155,7 +172,8 @@ ADD CONSTRAINT fk__tratta__aeroportoarrivo
 FOREIGN KEY (aeroporto_arrivo)
 REFERENCES Aeroporto(codice);
 
-ALTER TABLE Tratta ALTER CONSTRAINT fk__tratta__aeroportoarrivo
+ALTER TABLE Tratta 
+ALTER CONSTRAINT fk__tratta__aeroportoarrivo
 DEFERRABLE INITIALLY DEFERRED;
 
 -- end of table's FK definition
