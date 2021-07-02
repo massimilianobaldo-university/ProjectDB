@@ -9,7 +9,7 @@ start transaction;
 -- domains 
 CREATE dom_cf AS char(16);
 CREATE dom_telefono AS text
-   CONSTRAINT valid_taxon_id check (value ~ '^\d+$');
+   CONSTRAINT valid_dom_telefono check (value ~ '^\d+$');
 
 -- start of table creation
 CREATE TABLE Cliente(
