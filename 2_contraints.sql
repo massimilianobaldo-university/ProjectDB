@@ -1,9 +1,14 @@
 -- connect to db
 \c progettobasididatidb;
 
--- start of table's FK definition
 start transaction;
 
+-- 1) indexes, 2) Foreign keys
+
+-- 1) indexes definition
+CREATE INDEX citta_idx ON Aeroporto (citta);
+
+-- 2) foreign keys definition
 -- FK Prenotazione
 ALTER TABLE Prenotazione
 ADD CONSTRAINT fk__prenotazione__cliente 
@@ -176,5 +181,4 @@ ALTER TABLE Tratta
 ALTER CONSTRAINT fk__tratta__aeroportoarrivo
 DEFERRABLE INITIALLY DEFERRED;
 
--- end of table's FK definition
 commit;
