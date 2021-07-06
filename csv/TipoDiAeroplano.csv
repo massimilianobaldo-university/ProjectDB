@@ -1,4 +1,4 @@
-Airplane_type_name, Max_seats, Company, Autonomia_di_volo
+nome, numero_posti_massimo, azienda_costruttrice, autonomia_di_volo
 A320, 180, Airbus, 20
 A319, 156, Airbus, 11
 A321, 236, Airbus, 10
