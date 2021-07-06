@@ -8,7 +8,7 @@ library(charlatan)
 ## First Step: from some real data, create new fake data and aggregate them togheter
 ## Dataframe to work: cliente, classe_possibile, giorni_della_settimana, compagnia_aerea, tipo_di_aereoplano, aereoporto
 
-dfAereporti <- read.csv("./csv/Aeroporto.csv")
+dfAeroporti <- read.csv("./csv/Aeroporto.csv")
 dfTipoAereoplano <- read.csv("./csv/TipoDiAeroplano.csv")
 dfGiorniSettimana <- read.csv("./csv/GiorniDellaSettimana.csv")
 dfClassi <- read.csv("./csv/ClassePossibile.csv")
@@ -16,8 +16,8 @@ dfAereoplani <- read.csv("./csv/Aeroplano.csv")
 dfCompagniaAerea <- read.csv("./csv/CompagniaAerea.csv")
 
 
-#fakeAereports <- simulate_dataset(dfAereporti, n=80)
-#fakeAereports <- rbind(dfAereporti, fakeAereports) %>%
+#fakeAereports <- simulate_dataset(dfAeroporti, n=80)
+#fakeAereports <- rbind(dfAeroporti, fakeAereports) %>%
 #  distinct(Airport_code, .keep_all = TRUE)
 
 
@@ -82,14 +82,31 @@ generateSensibleTime <- function(x=c()) {
     unlist()
 }
 
+generatePrice <- function(n=1) {
+  x <- ch_double(n=n, mean=70, sd = 20)
+  unlist(map(x, function(v) {
+    if (v < 0)
+      return(format(round(abs(v),2), nsmall=2))
+    else if (v < 20) {
+      v <- v + ch_integer(min = v, max=100)
+      return(format(round(v,2), nsmall=2))
+    }
+    else
+      return(format(round(v,2), nsmall=2))
+  }))
+}
+
+
+
+
 # Può decollare
 puoDecollare <- generateCartesianProd(50, tipo_aeroplano = dfTipoAereoplano$nome,
-                                       aeroporto = dfAereporti$codice)
+                                       aeroporto = dfAeroporti$codice)
 
 # Tratta
 # Tratta ID -> T####
-tratta <- generateCartesianProd(50, aeroporto_arrivo = dfAereporti$codice,
-                                aeroporto_partenza = dfAereporti$codice) %>%
+tratta <- generateCartesianProd(50, aeroporto_arrivo = dfAeroporti$codice,
+                                aeroporto_partenza = dfAeroporti$codice) %>%
           subset(aeroporto_arrivo != aeroporto_partenza) # non lo stesso aereoporto di arrivo e partenza
 
 tratta$id <- generateID(nrow(tratta), id_format = "T####")
@@ -111,18 +128,31 @@ clients <- clients %>% separate("nome", c("nome","cognome"), extra = "merge")
 clients <- clients[, c("codice_fiscale","nome","cognome","telefono")]
 
 
+# Volo
+volo <- generateCartesianProd(50, aeroporto_arrivo=dfAeroporti$codice,
+                              aeroporto_partenza=dfAeroporti$codice) %>%
+  subset(aeroporto_arrivo != aeroporto_partenza)
+volo$codice <- generateID(n = nrow(volo), id_format = "V?###")
+volo$orario_partenza <- generateTime(nrow(volo))
+volo$orario_previsto_arrivo <- generateSensibleTime(volo$orario_partenza)
+
+
 # Classe di Volo
-#classeVolo <- generateCartesianProd(50, Classe=dfClassi$Priorita,
-                                    #Volo=)
+classeDiVolo <- generateCartesianProd(30, classe=dfClassi$Priorita,
+                                      volo = volo$codice)
+classeDiVolo$prezzo <- generatePrice(nrow(classeDiVolo))
+
+#Volo Tratta
+voloTratta <- generateCartesianProd(50, tratta=tratta$id,
+                                    volo=volo$codice)
+#TODO: numero progressivo?
 
 
-
-
-
-
-
-
-
+# Prenotazione
+prenotazione <- generateCartesianProd(30, cliente=clients$codice_fiscale,
+                                      volo = classeDiVolo$volo,
+                                      classse = classeDiVolo$classe)
+prenotazione$codice <- generateID(nrow(prenotazione), id_format = "P###")
 
 
 
