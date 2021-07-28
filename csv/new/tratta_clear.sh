@@ -1,4 +1,4 @@
-file='tratta_new'
+file='tratta'
 ext='.csv'
 i=1
 
@@ -17,6 +17,7 @@ new_file=${file}'_'${i}${ext}
 cat $old_file | cut -d',' -f3,5 >$new_file
 
 i=$(($i + 1))
+rm $old_file
 
 #rimuovere le righe che hanno ',' nel nome.. abbiamo perso il codice
 old_file=$new_file
@@ -25,3 +26,7 @@ new_file=${file}'_'${i}${ext}
 cat $old_file | grep ^[A-Z][A-Z][A-Z],[A-Z][A-Z][A-Z]$ >$new_file
 
 i=$(($i + 1))
+rm $old_file
+
+mv ${new_file} ${file}_modified${new}${ext}
+

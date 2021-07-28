@@ -1,4 +1,4 @@
-file='compagnia_aerea_new'
+file='compagnia_aerea'
 ext='.csv'
 i=1
 
@@ -17,6 +17,7 @@ new_file=${file}'_'${i}${ext}
 cat $old_file | cut -d',' -f2 >$new_file
 
 i=$(($i + 1))
+rm $old_file
 
 #rimuovere le righe che hanno ',' nel nome.. abbiamo perso il codice
 old_file=$new_file
@@ -25,3 +26,6 @@ new_file=${file}'_'${i}${ext}
 cat $old_file | grep \'$ >$new_file
 
 i=$(($i + 1))
+rm $old_file
+
+mv ${new_file} ${file}_modified${new}${ext}
