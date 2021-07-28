@@ -33,9 +33,7 @@ CREATE domain dom_codice_volo AS varchar(7)
    CONSTRAINT valid_dom_codice_volo 
    CHECK (value ~ '^V[A-Z]{1,2}[0-9]{2,4}$');
    
-CREATE domain dom_tipo_aeroplano AS varchar(6)
-   CONSTRAINT valid_dom_tipo_aeroplano 
-   CHECK (value ~ '^[A-Z]{0,3}[0-9]{2,3}$');
+CREATE domain dom_tipo_aeroplano AS text;
 
 CREATE domain dom_compagnia_aerea AS text;
 
@@ -127,7 +125,7 @@ CREATE TABLE Aeroplano(
 CREATE TABLE TipoDiAeroplano(
     nome dom_tipo_aeroplano primary key,
     numero_posti_massimo integer not null,
-    azienda_costruttrice varchar(20) not null,
+    azienda_costruttrice text not null,
     autonomia_di_volo integer not null
 );
 
