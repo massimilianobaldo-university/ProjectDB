@@ -5,24 +5,27 @@ library(tidyverse)
 library(hms)
 library(charlatan)
 
-## First Step: from some real data, create new fake data and aggregate them togheter
-## Dataframe to work: cliente, classe_possibile, giorni_della_settimana, compagnia_aerea, tipo_di_aereoplano, aereoporto
+## First Step: load the existing data from the directory "./csv"
 
-dfAeroporti <- read.csv("./csv/Aeroporto.csv")
-dfTipoAereoplano <- read.csv("./csv/TipoDiAeroplano.csv")
-dfGiorniSettimana <- read.csv("./csv/GiorniDellaSettimana.csv")
-dfClassi <- read.csv("./csv/ClassePossibile.csv")
-dfAereoplani <- read.csv("./csv/Aeroplano.csv")
-dfCompagniaAerea <- read.csv("./csv/CompagniaAerea.csv")
+## These derive from the cleaning of the previous step
+aeroporto <- read.csv("./csv/new/aeroporto_modified.csv")
+compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv")
+tipoAeroplano <- read.csv("./csv/TipoDiAeroplano.csv")
 
-
-#fakeAereports <- simulate_dataset(dfAeroporti, n=80)
-#fakeAereports <- rbind(dfAeroporti, fakeAereports) %>%
-#  distinct(Airport_code, .keep_all = TRUE)
+## These are well known
+giornoSettimana <- read.csv("./csv/GiorniDellaSettimana.csv")
+classe <- read.csv("./csv/ClassePossibile.csv")
 
 
-## Second step
-## 
+pr <- read.csv("./csv/new/tipo_aeroplano.csv", sep = ";")
+pr <- pr[2:3]
+
+
+# ----------------------------------------------------------------------------- #
+
+## Second step: generate casual data for the necessary analysis
+
+## Auxiliar functions
 
 # Dati due vettori di valori unvoci, la funzione crea un df contente un sample del prodotto cartesiano tra i due vettori
 generateCartesianProd <- function(n = 1, ...){
@@ -82,6 +85,11 @@ generateSensibleTime <- function(x=c()) {
     unlist()
 }
 
+generateSensibleValue <- function(x=c()) {
+  
+}
+
+
 generatePrice <- function(n=1) {
   x <- ch_double(n=n, mean=70, sd = 20)
   unlist(map(x, function(v) {
@@ -97,6 +105,27 @@ generatePrice <- function(n=1) {
 }
 
 
+# Tipo di Aeroplano
+#tipoAereoplano[1] <- "nome"
+#tipoAereoplano[2] <- "azienda_costruttrice"
+
+#tipoAereoplano$numero_massimo_posti <- ch_integer(nrow(tipoAereoplano), min = 50, max = 300)
+#tipoAereoplano$autonomia_di_volo <- ch_integer(nrow(tipoAereoplano), min = 3, max = 24)
+
+# Aeroplano
+aeroplano <- data.frame(matrix(ncol = 0, nrow = 1000))
+aeroplano$codice <- generateID(n = 1000, id_format = "AP###")
+aeroplano$tipo_aeroplano <- sample(tipoAeroplano$nome, 1000, replace = TRUE)
+
+l <- map(aeroplano$tipo_aeroplano, function(v) {
+  numberRow <- which(tipoAeroplano$nome == v) #tipoAeroplano[which(tipoAeroplano$nome == v), 2]
+  maxValue <- tipoAeroplano[numberRow, 2]
+  t <- ch_integer(n = 1, min = 20, max = maxValue)
+  return(t)
+}) %>% unlist()
+
+aeroplano$numero_posti <- l
+
 
 
 # Può decollare
@@ -105,10 +134,10 @@ puoDecollare <- generateCartesianProd(50, tipo_aeroplano = dfTipoAereoplano$nome
 
 # Tratta
 # Tratta ID -> T####
-tratta <- generateCartesianProd(50, aeroporto_arrivo = dfAeroporti$codice,
-                                aeroporto_partenza = dfAeroporti$codice) %>%
-          subset(aeroporto_arrivo != aeroporto_partenza) # non lo stesso aereoporto di arrivo e partenza
+tratta <- ## load the Tratta dataframe
 
+tratta[1] <- "aereoporto_partenza"
+tratta[2] <- "aereoporto_arrivo"
 tratta$id <- generateID(nrow(tratta), id_format = "T####")
 tratta$orario_partenza <- generateTime(nrow(tratta))
 tratta$orario_previsto_arrivo <- generateSensibleTime(tratta$orario_partenza)
