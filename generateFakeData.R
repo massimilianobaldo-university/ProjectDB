@@ -1,15 +1,21 @@
 # RScrpit for generate fake data in csv mode
 
-library(dplyr)
+#library(dplyr)
 library(tidyverse)
-library(hms)
 library(charlatan)
 
 ## First Step: load the existing data from the directory "./csv"
 
 ## These derive from the cleaning of the previous step
-aeroporto <- read.csv("./csv/new/aeroporto_modified.csv")
-compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv")
+aeroporto <- read.csv("./csv/new/aeroporto_modified.csv", header = FALSE) %>%
+  rename(nome = V1, citta = V2, nazione = V3, codice = V4)
+
+compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv", header = FALSE) %>%
+  rename(nome = V1)
+
+tratta <- read.csv("./csv/new/tratta_modified.csv", header = FALSE) %>%
+  rename(aeroporto_arrivo = V1, aeroporto_destinazione = V2)
+
 tipoAeroplano <- read.csv("./csv/TipoDiAeroplano.csv")
 
 ## These are well known
@@ -17,8 +23,8 @@ giornoSettimana <- read.csv("./csv/GiorniDellaSettimana.csv")
 classe <- read.csv("./csv/ClassePossibile.csv")
 
 
-pr <- read.csv("./csv/new/tipo_aeroplano.csv", sep = ";")
-pr <- pr[2:3]
+#pr <- read.csv("./csv/new/tipo_aeroplano.csv", sep = ";")
+#pr <- pr[2:3]
 
 
 # ----------------------------------------------------------------------------- #
@@ -27,46 +33,33 @@ pr <- pr[2:3]
 
 ## Auxiliar functions
 
-# Dati due vettori di valori unvoci, la funzione crea un df contente un sample del prodotto cartesiano tra i due vettori
-generateCartesianProd <- function(n = 1, ...){
-  karg <- list(...)
-  tmp_df <- cross_df(karg) %>%
-            unique() %>%
-            sample_n(n)
-  return(tmp_df)
+# Dati due vettori di valori unvoci, la funzione crea un df contente un sample 
+# del prodotto cartesiano tra i due vettori
+sampleCombineVectors <- function(x=c(), y=c(), n=min(length(x), length(y))) {
+  tmpDf <- data.frame(matrix(ncol = 0, nrow = n))
+  return(tmpDf)
 }
 
 # Funzione per creare custom ID secondo un template
 # # = è un cifra, ? = è un carattere alfabetico
-generateID <- function(n=1, id_format="##") {
-  tmpVec = c()
-  item = 1
+generateId <- function(n=1, format="##") {
+  (x <- BaseProvider$new())
+  tmpVec = character(n)
   
-  #recursive function for generate a list of different ids
-  aux <- function(i, id, n, vec) {
-    (x <- BaseProvider$new())
-    if (i <= n) {
-      vec[i] <- x$bothify(id)
-      i <- i + 1
-      aux(i, id, n, vec)
-    } else {
-      return(vec)
-    }
-  }
-  
+  # substitute new Id for all the elements and
   # uppercase all the alfa-character
-  result <- aux(item, id_format, n, tmpVec) %>%
-    lapply(., function(v) {
+  result <- lapply(tmpVec, function(v) {
+      v <- x$bothify(format)
       if(is.character(v))
-        return(toupper(v))
-      else
-        return(v)
+        v <- toupper(v)
+      return(v)
     })
   
   return(result)
 }
 
-# Funzione per generare orario nella forma "16:20"
+
+# Funzione per generare orario nella forma "HH:MM"
 generateTime <- function(n=1, hour=0, minute=23) {
   hours <- as.character(ch_integer(n = n, min = hour, max = 23))
   minutes <- as.character(ch_integer(n = n, min = minute, max = 59))
@@ -86,7 +79,6 @@ generateSensibleTime <- function(x=c()) {
 }
 
 generateSensibleValue <- function(x=c()) {
-  
 }
 
 
@@ -114,54 +106,51 @@ generatePrice <- function(n=1) {
 
 # Aeroplano
 aeroplano <- data.frame(matrix(ncol = 0, nrow = 1000))
-aeroplano$codice <- generateID(n = 1000, id_format = "AP###")
-aeroplano$tipo_aeroplano <- sample(tipoAeroplano$nome, 1000, replace = TRUE)
-
-l <- map(aeroplano$tipo_aeroplano, function(v) {
-  numberRow <- which(tipoAeroplano$nome == v) #tipoAeroplano[which(tipoAeroplano$nome == v), 2]
-  maxValue <- tipoAeroplano[numberRow, 2]
-  t <- ch_integer(n = 1, min = 20, max = maxValue)
-  return(t)
-}) %>% unlist()
-
-aeroplano$numero_posti <- l
-
-
+aeroplano$codice <- generateId(n = nrow(aeroplano), format = "AP####")
+aeroplano$tipo_aeroplano <-
+  sample(tipoAeroplano$nome, nrow(aeroplano), replace = TRUE)
+aeroplano$numero_posti <-
+  map(aeroplano$tipo_aeroplano, function(v) {
+    numberRow <- which(tipoAeroplano$nome == v)
+    maxValue <- tipoAeroplano[numberRow, 2]
+    t <- ch_integer(n = 1, min = 20, max = maxValue)
+    return(t)
+  }) %>% unlist()
 
 # Può decollare
-puoDecollare <- generateCartesianProd(50, tipo_aeroplano = dfTipoAereoplano$nome,
-                                       aeroporto = dfAeroporti$codice)
+puoDecollare <- data.frame(matrix(ncol = 0, nrow = 50))
+puoDecollare$tipo_aeroplano <- sample(tipoAeroplano$nome, size = nrow(puoDecollare), replace = TRUE)
+puoDecollare$aeroporto <- sample(aeroporto$codice, size = nrow(puoDecollare))
 
 # Tratta
 # Tratta ID -> T####
-tratta <- ## load the Tratta dataframe
-
-tratta[1] <- "aereoporto_partenza"
-tratta[2] <- "aereoporto_arrivo"
-tratta$id <- generateID(nrow(tratta), id_format = "T####")
+tratta$id <- generateId(nrow(tratta), format = "T#####")
 tratta$orario_partenza <- generateTime(nrow(tratta))
 tratta$orario_previsto_arrivo <- generateSensibleTime(tratta$orario_partenza)
 
 # Compagnia Aerea Aereoplano
-compagniaAereaAereoplano <- generateCartesianProd(50, compagnia_aerea = dfCompagniaAerea$nome,
-                                                  aereoplano = dfAereoplani$codice)
-
-
+compagniaAereaAereoplano <- data.frame(matrix(ncol = 0, nrow = 50))
+compagniaAereaAereoplano$compagnia_aerea <- sample(compagniaAerea$nome, size = nrow(compagniaAereaAereoplano))
+compagniaAereaAereoplano$aeroplano <- sample(aeroplano$codice, size = nrow(compagniaAereaAereoplano))
 
 # Clienti
 clients <- ch_generate('name', 'phone_number', n = 100, locale = "it_IT")
 colnames(clients) <- c("nome","telefono")
 clients$nome <- gsub(pattern = "Sig. |Sig.ra |Dott. ", replacement = "", x = clients$nome)
-clients$codice_fiscale <- generateID(n=nrow(clients), id_format = "??????##?##???#?")
+clients$codice_fiscale <- generateId(n=nrow(clients), format = "??????##?##???#?")
 clients <- clients %>% separate("nome", c("nome","cognome"), extra = "merge")
 clients <- clients[, c("codice_fiscale","nome","cognome","telefono")]
 
 
 # Volo
-volo <- generateCartesianProd(50, aeroporto_arrivo=dfAeroporti$codice,
-                              aeroporto_partenza=dfAeroporti$codice) %>%
+volo <- data.frame(matrix(ncol = 0, nrow = 50))
+volo$aeroporto_arrivo <- sample(aeroporto$codice, size = nrow(volo))
+volo$aeroporto_partenza <- sample(aeroporto$codice, size = nrow(volo))
+
+volo <- generateCartesianProd(50, aeroporto_arrivo=aeroporto$codice,
+                              aeroporto_partenza=aeroporto$codice) %>%
   subset(aeroporto_arrivo != aeroporto_partenza)
-volo$codice <- generateID(n = nrow(volo), id_format = "V?###")
+volo$codice <- generateId(n = nrow(volo), format = "V?###")
 volo$orario_partenza <- generateTime(nrow(volo))
 volo$orario_previsto_arrivo <- generateSensibleTime(volo$orario_partenza)
 
