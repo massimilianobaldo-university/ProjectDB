@@ -220,4 +220,4 @@ prenotazioneIstanzaTratta$posto_prenotato <-
   map(~ sample(x = (1:.), size = 1)) %>%
   map(~ paste("PP", ., sep = "")) %>%
   unlist()
-write.csv(prenotazioneIstanzaTratta, "./csv/prenotazioneIstanzaTratta.csv")
+write.csv(prenotazioneIstanzaTratta, "./csv/PrenotazioneIstanzaTratta.csv")
