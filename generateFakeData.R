@@ -1,6 +1,5 @@
 # RScrpit for generate fake data in csv mode
 
-#library(dplyr)
 library(tidyverse)
 library(charlatan)
 
@@ -14,7 +13,7 @@ compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv", header = FA
   rename(nome = V1)
 
 tratta <- read.csv("./csv/new/tratta_modified.csv", header = FALSE) %>%
-  rename(aeroporto_arrivo = V1, aeroporto_destinazione = V2)
+  rename(aeroporto_partenza = V1, aeroporto_arrivo = V2)
 
 tipoAeroplano <- read.csv("./csv/TipoDiAeroplano.csv")
 
@@ -56,6 +55,14 @@ generateId <- function(n=1, format="##") {
     })
   
   return(result)
+}
+
+generateUniqueId <- function(n=1, prefix="") {
+  v <- (1:n) %>%
+    lapply(., function(e) {
+      return(paste(prefix, e, sep = ""))
+    }) %>% unlist()
+  return(v)
 }
 
 
@@ -106,7 +113,7 @@ generatePrice <- function(n=1) {
 
 # Aeroplano
 aeroplano <- data.frame(matrix(ncol = 0, nrow = 1000))
-aeroplano$codice <- generateId(n = nrow(aeroplano), format = "AP####")
+aeroplano$codice <- generateUniqueId(n = nrow(aeroplano), prefix = "AP")
 aeroplano$tipo_aeroplano <-
   sample(tipoAeroplano$nome, nrow(aeroplano), replace = TRUE)
 aeroplano$numero_posti <-
@@ -116,66 +123,101 @@ aeroplano$numero_posti <-
     t <- ch_integer(n = 1, min = 20, max = maxValue)
     return(t)
   }) %>% unlist()
+write.csv(aeroplano, "./csv/Aeroplano.csv")
 
 # Può decollare
 puoDecollare <- data.frame(matrix(ncol = 0, nrow = 50))
 puoDecollare$tipo_aeroplano <- sample(tipoAeroplano$nome, size = nrow(puoDecollare), replace = TRUE)
 puoDecollare$aeroporto <- sample(aeroporto$codice, size = nrow(puoDecollare))
+write.csv(puoDecollare, "./csv/PuòDecollare.csv")
 
 # Tratta
 # Tratta ID -> T####
-tratta$id <- generateId(nrow(tratta), format = "T#####")
+tratta$id <- generateUniqueId(nrow(tratta), prefix = "T")
 tratta$orario_partenza <- generateTime(nrow(tratta))
 tratta$orario_previsto_arrivo <- generateSensibleTime(tratta$orario_partenza)
+write.csv(tratta, "./csv/Tratta.csv")
 
 # Compagnia Aerea Aereoplano
 compagniaAereaAereoplano <- data.frame(matrix(ncol = 0, nrow = 50))
 compagniaAereaAereoplano$compagnia_aerea <- sample(compagniaAerea$nome, size = nrow(compagniaAereaAereoplano))
 compagniaAereaAereoplano$aeroplano <- sample(aeroplano$codice, size = nrow(compagniaAereaAereoplano))
+write.csv(compagniaAereaAereoplano, "./csv/CompagniaAereaAereoplano.csv")
 
 # Clienti
-clients <- ch_generate('name', 'phone_number', n = 100, locale = "it_IT")
-colnames(clients) <- c("nome","telefono")
-clients$nome <- gsub(pattern = "Sig. |Sig.ra |Dott. ", replacement = "", x = clients$nome)
-clients$codice_fiscale <- generateId(n=nrow(clients), format = "??????##?##???#?")
-clients <- clients %>% separate("nome", c("nome","cognome"), extra = "merge")
-clients <- clients[, c("codice_fiscale","nome","cognome","telefono")]
-
+cliente <- ch_generate('name', 'phone_number', n = 100, locale = "it_IT")
+colnames(cliente) <- c("nome","telefono")
+cliente$nome <- gsub(pattern = "Sig. |Sig.ra |Dott. ", replacement = "", x = cliente$nome)
+cliente$codice_fiscale <- generateId(n=nrow(cliente), format = "??????##?##???#?")
+cliente <- cliente %>% separate("nome", c("nome","cognome"), extra = "merge")
+cliente <- cliente[, c("codice_fiscale","nome","cognome","telefono")]
+write.csv(cliente, "./csv/Cliente.csv")
 
 # Volo
 volo <- data.frame(matrix(ncol = 0, nrow = 50))
 volo$aeroporto_arrivo <- sample(aeroporto$codice, size = nrow(volo))
 volo$aeroporto_partenza <- sample(aeroporto$codice, size = nrow(volo))
-
-volo <- generateCartesianProd(50, aeroporto_arrivo=aeroporto$codice,
-                              aeroporto_partenza=aeroporto$codice) %>%
-  subset(aeroporto_arrivo != aeroporto_partenza)
-volo$codice <- generateId(n = nrow(volo), format = "V?###")
+volo <- volo %>% subset(aeroporto_arrivo != aeroporto_partenza)
+volo$codice <- generateUniqueId(n = nrow(volo), prefix = "V")
 volo$orario_partenza <- generateTime(nrow(volo))
 volo$orario_previsto_arrivo <- generateSensibleTime(volo$orario_partenza)
-
+write.csv(volo, "./csv/Volo.csv")
 
 # Classe di Volo
-classeDiVolo <- generateCartesianProd(30, classe=dfClassi$Priorita,
-                                      volo = volo$codice)
+classeDiVolo <- data.frame(matrix(ncol = 0, nrow = 30))
+classeDiVolo$classe <- sample(classe$Priorita, size = nrow(classeDiVolo), replace = TRUE)
+classeDiVolo$volo <- sample(volo$codice, size = nrow(classeDiVolo))
 classeDiVolo$prezzo <- generatePrice(nrow(classeDiVolo))
+write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv")
 
 #Volo Tratta
-voloTratta <- generateCartesianProd(50, tratta=tratta$id,
-                                    volo=volo$codice)
-#TODO: numero progressivo?
+voloTratta <- data.frame(matrix(ncol = 0, nrow = 50))
+voloTratta$tratta <- sample(tratta$id, size = nrow(voloTratta))
+voloTratta$volo <- sample(volo$codice, size = nrow(voloTratta))
+voloTratta$numero_progressivo <- rep(1)
 
+## Trovo delle tratte per le quali l'aeroporto di arrivo è anche aereoporto di destinazione
+secondaTratta <- inner_join(tratta, voloTratta, by = c("id" = "tratta")) %>% 
+  subset(aeroporto_arrivo %in% aeroporto_partenza)
+
+## A quelle specifiche tratte, assegno un valore progressivo maggiore
+voloTratta$numero_progressivo[voloTratta$tratta %in% secondaTratta$id] <- voloTratta$numero_progressivo[voloTratta$tratta %in% secondaTratta$id] + 1
+
+remove(secondaTratta)
+write.csv(voloTratta, "./csv/VoloTratta.csv")
 
 # Prenotazione
-prenotazione <- generateCartesianProd(30, cliente=clients$codice_fiscale,
-                                      volo = classeDiVolo$volo,
-                                      classse = classeDiVolo$classe)
-prenotazione$codice <- generateID(nrow(prenotazione), id_format = "P###")
+prenotazione <- data.frame(matrix(ncol = 0, nrow = 30))
+prenotazione$cliente <- sample(cliente$codice_fiscale, size = nrow(prenotazione))
+prenotazione$volo <- sample(classeDiVolo$volo, size = nrow(prenotazione))
+prenotazione$classe <- sample(classeDiVolo$classe, size = nrow(prenotazione))
+prenotazione$codice <- generateUniqueId(nrow(prenotazione), prefix = "P")
+write.csv(prenotazione, "./csv/Prenotazione.csv")
 
+# Istanza di Tratta
+istanzaTratta <- data.frame(matrix(ncol = 0, nrow = 30))
+istanzaTratta$tratta <- sample(tratta$id, size = nrow(istanzaTratta))
+istanzaTratta$aeroplano <- sample(aeroplano$codice, size = nrow(istanzaTratta))
+istanzaTratta$data <- sample(seq(as.Date('1990/01/01'), as.Date('2021/01/01'), by="day"), size = nrow(istanzaTratta))
+istanzaTratta$numero_posti_rimanenti <- 
+  inner_join(istanzaTratta, aeroplano, by = c("aeroplano" = "codice")) %>%
+  .$numero_posti %>%
+  map(~ sample(x = (1:.), size = 1)) %>%
+  unlist()
+write.csv(istanzaTratta, "./csv/IstanzaTratta.csv")
 
-
-
-
-
-
-
+# Prenotazione istanza di tratta
+# codice_prenotazione, tratta, data_istanza_tratta, posto_prenotato
+prenotazioneIstanzaTratta <- data.frame(matrix(ncol = 0, nrow = 30))
+prenotazioneIstanzaTratta$codice_prenotazione <- sample(prenotazione$codice, size = nrow(istanzaTratta))
+prenotazioneIstanzaTratta$tratta <- sample(istanzaTratta$tratta, size = nrow(istanzaTratta))
+prenotazioneIstanzaTratta$data_istanza_tratta <- sample(istanzaTratta$data, size = nrow(istanzaTratta))
+prenotazioneIstanzaTratta$posto_prenotato <- 
+  inner_join(prenotazioneIstanzaTratta, istanzaTratta) %>%
+  select(aeroplano) %>%
+  inner_join(aeroplano, by = c("aeroplano" = "codice")) %>%
+  .$numero_posti %>%
+  map(~ sample(x = (1:.), size = 1)) %>%
+  map(~ paste("PP", ., sep = "")) %>%
+  unlist()
+write.csv(prenotazioneIstanzaTratta, "./csv/prenotazioneIstanzaTratta.csv")
