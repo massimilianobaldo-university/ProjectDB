@@ -22,14 +22,6 @@ VALUES
 ('P3', 'RDPCZW50H52C879U', 'VDL5841', 3),
 ('P4', 'FFNMPM29E19G365M', 'VDL1149', 3);
 
-INSERT INTO Prenotazione_IstanzaDiTratta 
-(codice_prenotazione, data_istanza_tratta, tratta, posto_prenotato)
-VALUES
-('P1', '2021-06-30', 'T1000', '01A'),
-('P2', '2021-07-01', 'T1001', '01B'),
-('P3', '2021-07-10', 'T1002', '03C'),
-('P4', '2021-07-10', 'T1002', '06F');
-
 INSERT INTO ClassePossibile
 (priorita, nome)
 VALUES
@@ -164,5 +156,14 @@ VALUES
 ('T1002', '2021-07-09', 30),
 ('T1003', '2021-07-10', 30),
 ('T1004', '2021-07-10', 40);
+
+INSERT INTO Prenotazione_IstanzaDiTratta 
+(codice_prenotazione, data_istanza_tratta, tratta, posto_prenotato)
+VALUES
+('P1', '2021-06-28', 'T1000', '01A'),
+('P2', '2021-07-07', 'T1001', '01B'),
+('P3', '2021-07-08', 'T1002', '03C'),
+('P4', '2021-07-10', 'T1003', '06F'),
+('P4', '2021-07-10', 'T1004', '02D');
 
 commit;
