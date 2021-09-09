@@ -9,6 +9,18 @@ start transaction;
 CREATE INDEX citta_idx ON Aeroporto (citta);
 
 -- 2) foreign keys definition
+
+-- FK Prenotazione_IstanzaDiTratta
+ALTER TABLE Prenotazione_IstanzaDiTratta
+ADD CONSTRAINT fk__prenotazione_istanzaditratta__prenotazione
+FOREIGN KEY (codice_prenotazione)
+REFERENCES Prenotazione(codice);
+
+ALTER TABLE Prenotazione_IstanzaDiTratta
+ADD CONSTRAINT fk__prenotazione_istanzaditratta__istanzaditratta
+FOREIGN KEY (tratta, data_istanza_tratta)
+REFERENCES IstanzaDiTratta(tratta, data_istanza);
+
 -- FK Prenotazione
 ALTER TABLE Prenotazione
 ADD CONSTRAINT fk__prenotazione__cliente 

@@ -31,7 +31,8 @@ $$
     declare
         ok integer;
     begin
-        select count(*) into ok
+        select count(*) 
+            into ok
         from Volo as V
         join Aeroporto as A_p on (A_p.codice = V.aeroporto_partenza)
         join Aeroporto as A_a on (A_a.codice = V.aeroporto_arrivo)
@@ -66,7 +67,8 @@ $$
     declare 
         ok integer;
     begin
-        select count(*) into ok -- IdT.tratta, IdT.data_istanza, IdT.aeroplano, A.tipo_aeroplano
+        select count(*) 
+            into ok -- IdT.tratta, IdT.data_istanza, IdT.aeroplano, A.tipo_aeroplano
         from IstanzaDiTratta as IdT
         join Tratta as T
             on (IdT.tratta = T.id)
@@ -93,5 +95,58 @@ after insert or update on IstanzaDiTratta
 for each row
 execute procedure aereo_puo_essere_utilizzato_istanza_tratta();
 
+-- set default to IstanzaDiTratta.NumeriPostiRimanenti
+
+create or replace function imposta_default_numero_posti_rimanenti()
+returns trigger language plpgsql as
+$$
+    begin
+        select A.numero_posti
+            into new.numero_posti_rimanenti
+        from Aeroplano as A
+        where (A.codice = new.aeroplano);
+
+        return new;
+    end;
+$$;
+
+create trigger trigger_imposta_default_numero_posti_rimanenti
+before insert on IstanzaDiTratta
+for each row
+execute procedure imposta_default_numero_posti_rimanenti();
+
+
+-- attributi ridondanti
+-- IstanzaDiTratta.NumeriPostiRimanenti
+
+create or replace function aggiorna_numero_posti_rimanenti()
+returns trigger language plpgsql as
+$$
+    declare 
+        new_num integer;
+    begin
+        select (numero_posti_rimanenti - 1) 
+            into new_num
+        from IstanzaDiTratta as IdT
+        where (new.tratta = IdT.tratta and new.data_istanza_tratta = IdT.data_istanza);
+
+        if new_num < 0
+        then
+            raise exception 'Posti esauriti';
+            return null;
+        end if;
+
+        update IstanzaDiTratta as IdT
+        set numero_posti_rimanenti = new_num
+        where (new.tratta = IdT.tratta and new.data_istanza_tratta = IdT.data_istanza);
+
+        return new;
+    end;
+$$;
+
+create trigger trigger_aggiorna_numero_posti_rimanenti
+before insert on Prenotazione_IstanzaDiTratta
+for each row
+execute procedure aggiorna_numero_posti_rimanenti();
 
 commit;
