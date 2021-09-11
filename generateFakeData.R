@@ -140,9 +140,10 @@ volo$codice <- generateUniqueId(n = nrow(volo), prefix = "V")
 write.csv(volo, "./csv/Volo.csv")
 
 # Giorno Settimana Volo
-giorniSettimanaVolo <- data.frame(matrix(ncol = 0, nrow = 200))
-giorniSettimanaVolo$giorno <- sample(giornoSettimana$nome, size = nrow(giorniSettimanaVolo), replace = TRUE)
-giorniSettimanaVolo$volo <- sample(volo$codice, size = nrow(giorniSettimanaVolo), replace = TRUE)
+giornoSettimanaVolo <- data.frame(matrix(ncol = 0, nrow = 200))
+giornoSettimanaVolo$giorno <- sample(giornoSettimana$nome, size = nrow(giornoSettimanaVolo), replace = TRUE)
+giornoSettimanaVolo$volo <- sample(volo$codice, size = nrow(giornoSettimanaVolo), replace = TRUE)
+write.csv(giorniSettimanaVolo, "./csv/giornoSettimanaVolo")
 
 # Classe di Volo
 # Prodotto cartesiano tra i due dataframe
