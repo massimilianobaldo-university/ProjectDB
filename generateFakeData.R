@@ -111,7 +111,7 @@ write.csv(aeroplano, "./csv/Aeroplano.csv")
 puoDecollare <- data.frame(matrix(ncol = 0, nrow = 150000))
 puoDecollare$tipo_aeroplano <- sample(tipoAeroplano$nome, size = nrow(puoDecollare), replace = TRUE)
 puoDecollare$aeroporto <- sample(aeroporto$codice, size = nrow(puoDecollare), replace = TRUE)
-write.csv(puoDecollare, "./csv/PuòDecollare.csv")
+write.csv(puoDecollare, "./csv/PuoDecollare.csv")
 
 # Tratta
 tratta$id <- generateUniqueId(nrow(tratta), prefix = "T")

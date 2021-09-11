@@ -5,7 +5,7 @@ library(RPostgreSQL)
 library(dplyr)
 
 # windows command:
-# .\psql.exe -h 127.0.0.1 -p 5433 -U postgres -d progettobasididatidb
+# C:\pgsql\bin\psql.exe -h 127.0.0.1 -p 5433 -U postgres -d progettobasididatidb
 
 drv <- dbDriver("PostgreSQL")
 
