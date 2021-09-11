@@ -143,7 +143,7 @@ write.csv(volo, "./csv/Volo.csv")
 giornoSettimanaVolo <- data.frame(matrix(ncol = 0, nrow = 200))
 giornoSettimanaVolo$giorno <- sample(giornoSettimana$nome, size = nrow(giornoSettimanaVolo), replace = TRUE)
 giornoSettimanaVolo$volo <- sample(volo$codice, size = nrow(giornoSettimanaVolo), replace = TRUE)
-write.csv(giorniSettimanaVolo, "./csv/giornoSettimanaVolo")
+write.csv(giorniSettimanaVolo, "./csv/GiornidellaSettimana_Volo.csv")
 
 # Classe di Volo
 # Prodotto cartesiano tra i due dataframe
@@ -175,7 +175,7 @@ secondaTratta$numero_progressivo <- secondaTratta$numero_progressivo + 1
 voloTratta <- rbind(voloTratta1, voloTratta2, secondaTratta)
 
 remove(secondaTratta)
-write.csv(voloTratta, "./csv/VoloTratta.csv")
+write.csv(voloTratta, "./csv/Volo_Tratta.csv")
 
 # Prenotazione
 prenotazione <- data.frame(matrix(ncol = 0, nrow = 1000000))
@@ -222,4 +222,4 @@ prenotazioneIstanzaTratta$posto_prenotato <-
     v <- sample((1:v), size = 1)
   })
        
-write.csv(as.matrix(prenotazioneIstanzaTratta), "./csv/PrenotazioneIstanzaTratta.csv")
+write.csv(as.matrix(prenotazioneIstanzaTratta), "./csv/Prenotazione_IstanzaTratta.csv")
