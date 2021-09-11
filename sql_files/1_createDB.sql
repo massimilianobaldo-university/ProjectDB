@@ -9,9 +9,9 @@ start transaction;
 -- domains definition
 CREATE domain dom_codice_fiscale AS char(16);
 
-CREATE domain dom_telefono AS text
-   CONSTRAINT valid_dom_telefono 
-   CHECK (value ~ '^[0-9]+$');
+CREATE domain dom_telefono AS text;
+--   CONSTRAINT valid_dom_telefono 
+--   CHECK (value ~ '^[0-9]+$');
 
 CREATE domain dom_codice_prenotazione AS text
    CONSTRAINT valid_dom_codice_prenotazione 

@@ -14,8 +14,8 @@ con <- dbConnect(
   dbname = "progettobasididatidb",
   host = "127.0.0.1",
   port = 5433, # usually 5432
-  user = "noob",
-  password = "in_chiaro"
+  user = "postgres",
+  password = "667l3"
 )
 
 #example
