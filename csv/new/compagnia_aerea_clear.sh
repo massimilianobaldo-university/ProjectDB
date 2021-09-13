@@ -29,3 +29,5 @@ i=$(($i + 1))
 rm $old_file
 
 mv ${new_file} ${file}_modified${new}${ext}
+
+#todo sort | uniq
