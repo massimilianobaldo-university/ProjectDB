@@ -147,7 +147,7 @@ write.csv(giorniDellaSettimana_Volo, "./csv/GiornidellaSettimana_Volo.csv", row.
 
 # Classe di Volo
 # Prodotto cartesiano tra i due dataframe
-classeDiVolo <- expand.grid(classe = classe$Priorita, volo = volo$codice)
+classeDiVolo <- expand.grid(classe = classe$priorita, volo = volo$codice)
 classeDiVolo$prezzo <- generatePrice(nrow(classeDiVolo))
 write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv", row.names = FALSE)
 
