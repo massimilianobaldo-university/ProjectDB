@@ -19,7 +19,7 @@ CREATE domain dom_codice_prenotazione AS text
 
 CREATE domain dom_codice_tratta AS text
    CONSTRAINT valid_dom_codice_tratta 
-   CHECK (value ~ '^T[0-9]{4,4}$');
+   CHECK (value ~ '^T[0-9]+$');
    
 CREATE domain dom_codice_aeroporto AS char(3)
    CONSTRAINT valid_dom_codice_aeroporto 
@@ -27,11 +27,11 @@ CREATE domain dom_codice_aeroporto AS char(3)
 
 CREATE domain dom_posto_aereo AS varchar(3)
    CONSTRAINT valid_dom_dom_posto_aereo 
-   CHECK (value ~ '^[0-9]{1,2}[A-Z]$');
+   CHECK (value ~ '^[0-9]+$');
    
 CREATE domain dom_codice_volo AS varchar(7)
    CONSTRAINT valid_dom_codice_volo 
-   CHECK (value ~ '^V[A-Z]{1,2}[0-9]{2,4}$');
+   CHECK (value ~ '^V[0-9]+$');
    
 -- CREATE domain dom_tipo_aeroplano AS text;
 
