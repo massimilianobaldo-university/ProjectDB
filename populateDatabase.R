@@ -7,7 +7,9 @@ library(dplyr)
 # windows command:
 # C:\pgsql\bin\psql.exe -h 127.0.0.1 -p 5433 -U postgres -d progettobasididatidb
 
+#change working directory
 setwd("csv")
+getwd()
 
 drv <- dbDriver("PostgreSQL")
 
@@ -16,8 +18,8 @@ con <- dbConnect(
   dbname = "progettobasididatidb",
   host = "127.0.0.1",
   port = 5433, # usually 5432
-  user = "noob",
-  password = "in_chiaro"
+  user = "?????????????????",
+  password = "?????????????????"
 )
 
 #not working because of FK dependencies
@@ -34,36 +36,43 @@ dbBegin(con)
 extension <- "csv"
 
 tables <- c(
-    "Cliente", 
-    "Prenotazione", 
-    "ClassePossibile", 
-    "ClasseDiVolo",
-    "Volo",
-    "GiorniDellaSettimana_Volo",
-    "Volo_Tratta",
-    "GiorniDellaSettimana",
-    "CompagniaAerea",
-    "CompagniaAerea_Aeroplano",
-    "Aeroplano",
-    "TipoDiAeroplano",
-    "PuoDecollare",
-    "Aeroporto",
-    "Tratta",
-    "IstanzaDiTratta",
-    "Prenotazione_IstanzaDiTratta"
+  "cliente",
+  "prenotazione", 
+  "classepossibile", 
+  "classedivolo",
+  "volo",
+  "giornidellasettimana_volo",
+  "volo_tratta",
+  "giornidellasettimana",
+  "compagniaaerea",
+  "compagniaaerea_aeroplano",
+  "aeroplano",
+  "tipodiaeroplano",
+  "puodecollare",
+  "aeroporto",
+  "tratta",
+  "istanzaditratta",
+  "prenotazione_istanzaditratta"
 )
 
 lapply(tables, function(x) {
-    df <- read.csv(paste(x, extension, sep = "."), header=TRUE)
-    dbWriteTable(con, name=c("public", x), value=df, 
-                 row.names=FALSE, overwrite=TRUE)
+    file_csv <- paste(x, extension, sep = ".")
+    df <- read.csv(file_csv, header=TRUE)
+    dbWriteTable(con, x, value=df, row.names=FALSE, append=TRUE)
 })
 
-#df <- read.csv(paste("cliente", extension, sep = "."), header=TRUE)
-#dbWriteTable(con, "cliente", value=df, row.names=FALSE, overwrite=TRUE)
+
+#table <- "prenotazione"
+#file_csv <- paste(table, extension, sep = ".")
+#df <- read.csv(file_csv, header=TRUE)
+#dbWriteTable(con, table, value=df, row.names=FALSE, append=TRUE)
 
 #commit transaction
 dbCommit(con)
 
 # disconnect from database
 dbDisconnect(con)
+
+#go back to original directory
+setwd("..")
+getwd()
