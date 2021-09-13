@@ -137,6 +137,7 @@ write.csv(as.matrix(cliente), "./csv/Cliente.csv", row.names = FALSE)
 # Volo
 volo <- data.frame(matrix(ncol = 0, nrow = 100))
 volo$codice <- generateUniqueId(n = nrow(volo), prefix = "V")
+volo$compagnia_aerea <- sample(compagniaAerea$nome, size = nrow(volo))
 write.csv(volo, "./csv/Volo.csv", row.names = FALSE)
 
 # Giorno Settimana Volo
@@ -153,11 +154,11 @@ write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv", row.names = FALSE)
 
 #Volo Tratta
 voloTratta1 <- data.frame(matrix(ncol = 0, nrow = 50))
-voloTratta1$tratta <- sample(tratta$id, size = nrow(voloTratta1))
 voloTratta1$volo <- sample(volo$codice, size = nrow(voloTratta1))
+voloTratta1$tratta <- sample(tratta$id, size = nrow(voloTratta1))
 voloTratta1$numero_progressivo <- rep(1)
 
-voloTratta2 <- anti_join(volo, voloTratta1, by = c("codice" = "volo"))
+voloTratta2 <- anti_join(volo, voloTratta1, by = c("codice" = "volo")) %>% subset(select = -c(compagnia_aerea))
 voloTratta2$tratta <- sample(tratta$id, size = nrow(voloTratta2))
 voloTratta2$numero_progressivo <- rep(1)
 
@@ -174,7 +175,7 @@ secondaTratta$numero_progressivo <- secondaTratta$numero_progressivo + 1
 
 voloTratta <- rbind(voloTratta1, voloTratta2, secondaTratta)
 
-remove(secondaTratta)
+remove(voloTratta1, voloTratta2, secondaTratta)
 write.csv(voloTratta, "./csv/Volo_Tratta.csv", row.names = FALSE)
 
 # Prenotazione
@@ -186,24 +187,24 @@ prenotazione$codice <- generateUniqueId(nrow(prenotazione), prefix = "P")
 write.csv(as.matrix(prenotazione), "./csv/Prenotazione.csv", row.names = FALSE)
 
 # Istanza di Tratta
-IstanzaDiTratta <- data.frame(matrix(ncol = 0, nrow = 160000))
-IstanzaDiTratta$tratta <- sample(tratta$id, size = nrow(IstanzaDiTratta), replace = TRUE)
-IstanzaDiTratta$data <- sample(seq(as.Date('1990/01/01'), as.Date('2021/01/01'), by="day"), size = nrow(IstanzaDiTratta), replace = TRUE)
-IstanzaDiTratta <- unique(IstanzaDiTratta[c("tratta", "data")])
-IstanzaDiTratta$aeroplano <- sample(aeroplano$codice, size = nrow(IstanzaDiTratta), replace = TRUE)
-IstanzaDiTratta$numero_posti_rimanenti <- 
-  inner_join(IstanzaDiTratta, aeroplano, by = c("aeroplano" = "codice")) %>%
+istanzaDiTratta <- data.frame(matrix(ncol = 0, nrow = 160000))
+istanzaDiTratta$tratta <- sample(tratta$id, size = nrow(istanzaDiTratta), replace = TRUE)
+istanzaDiTratta$data_istanza <- sample(seq(as.Date('1990/01/01'), as.Date('2021/01/01'), by="day"), size = nrow(istanzaDiTratta), replace = TRUE)
+istanzaDiTratta <- unique(istanzaDiTratta[c("tratta", "data_istanza")])
+istanzaDiTratta$aeroplano <- sample(aeroplano$codice, size = nrow(istanzaDiTratta), replace = TRUE)
+istanzaDiTratta$numero_posti_rimanenti <- 
+  inner_join(istanzaDiTratta, aeroplano, by = c("aeroplano" = "codice")) %>%
   .$numero_posti %>%
   map(~ sample(x = (1:.), size = 1)) %>%
   unlist()
-write.csv(IstanzaDiTratta, "./csv/IstanzaDiTratta.csv", row.names = FALSE)
+write.csv(istanzaDiTratta, "./csv/IstanzaDiTratta.csv", row.names = FALSE)
 
 remove(compagniaAerea_Aeroplano, puoDecollare, cliente, aeroporto)
 
 # Prenotazione istanza di tratta
 # Si estrapolano le righe in modo che siano consistenti i valori estraplati
 prenotazione_IstanzaDiTratta <-
-  IstanzaDiTratta[sample(row.names(IstanzaDiTratta), 1500000, replace = TRUE), c("tratta", "data")]
+  istanzaDiTratta[sample(row.names(istanzaDiTratta), 1500000, replace = TRUE), c("tratta", "data_istanza")]
 prenotazione_IstanzaDiTratta$codice_prenotazione <-
   sample(
     prenotazione$codice,
@@ -212,8 +213,8 @@ prenotazione_IstanzaDiTratta$codice_prenotazione <-
   )
 prenotazione_IstanzaDiTratta$posto_prenotato <-
   inner_join(prenotazione_IstanzaDiTratta,
-             IstanzaDiTratta,
-             by = c("tratta" = "tratta", "data" = "data")) %>%
+             istanzaDiTratta,
+             by = c("tratta" = "tratta", "data_istanza" = "data_istanza")) %>%
   select(aeroplano) %>%
   inner_join(aeroplano, by = c("aeroplano" = "codice")) %>%
   select(numero_posti) %>%
@@ -221,5 +222,6 @@ prenotazione_IstanzaDiTratta$posto_prenotato <-
   lapply(., function(v) {
     v <- sample((1:v), size = 1)
   })
+colnames(prenotazione_IstanzaDiTratta)[2] <- "data_istanza_tratta"
        
 write.csv(as.matrix(prenotazione_IstanzaDiTratta), "./csv/Prenotazione_IstanzaDiTratta.csv", row.names = FALSE)
