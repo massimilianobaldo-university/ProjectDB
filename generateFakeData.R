@@ -111,6 +111,7 @@ write.csv(aeroplano, "./csv/Aeroplano.csv", row.names = FALSE)
 puoDecollare <- data.frame(matrix(ncol = 0, nrow = 150000))
 puoDecollare$tipo_aeroplano <- sample(tipoDiAeroplano$nome, size = nrow(puoDecollare), replace = TRUE)
 puoDecollare$aeroporto <- sample(aeroporto$codice, size = nrow(puoDecollare), replace = TRUE)
+puoDecollare <- unique(puoDecollare[c("tipo_aeroplano", "aeroporto")])
 write.csv(puoDecollare, "./csv/PuoDecollare.csv", row.names = FALSE)
 
 # Tratta
@@ -123,6 +124,7 @@ write.csv(tratta, "./csv/Tratta.csv", row.names = FALSE)
 compagniaAerea_Aeroplano <- data.frame(matrix(ncol = 0, nrow = 120000))
 compagniaAerea_Aeroplano$compagnia_aerea <- sample(compagniaAerea$nome, size = nrow(compagniaAerea_Aeroplano), replace = TRUE)
 compagniaAerea_Aeroplano$aeroplano <- sample(aeroplano$codice, size = nrow(compagniaAerea_Aeroplano), replace = TRUE)
+compagniaAerea_Aeroplano <- unique(compagniaAerea_Aeroplano[c("compagnia_aerea", "aeroplano")])
 write.csv(compagniaAerea_Aeroplano, "./csv/CompagniaAerea_Aeroplano.csv", row.names = FALSE)
 
 # Clienti
@@ -144,12 +146,14 @@ write.csv(volo, "./csv/Volo.csv", row.names = FALSE)
 giorniDellaSettimana_Volo <- data.frame(matrix(ncol = 0, nrow = 200))
 giorniDellaSettimana_Volo$giorno_settimana <- sample(giorniDellaSettimana$nome, size = nrow(giorniDellaSettimana_Volo), replace = TRUE)
 giorniDellaSettimana_Volo$volo <- sample(volo$codice, size = nrow(giorniDellaSettimana_Volo), replace = TRUE)
+giorniDellaSettimana_Volo <- unique(giorniDellaSettimana_Volo[c("giorno_settimana", "volo")])
 write.csv(giorniDellaSettimana_Volo, "./csv/GiornidellaSettimana_Volo.csv", row.names = FALSE)
 
 # Classe di Volo
 # Prodotto cartesiano tra i due dataframe
 classeDiVolo <- expand.grid(classe = classe$priorita, volo = volo$codice)
 classeDiVolo$prezzo <- generatePrice(nrow(classeDiVolo))
+classeDiVolo <- unique(classeDiVolo[c("classe", "volo")])
 write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv", row.names = FALSE)
 
 #Volo Tratta
