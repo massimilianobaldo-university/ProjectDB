@@ -11,12 +11,18 @@ set.seed(285391)
 aeroporto <- read.csv("./csv/new/aeroporto_modified.csv", header = FALSE) %>%
   rename(nome = V1, citta = V2, nazione = V3, codice = V4)
 
+write.csv(aeroporto, "./csv/Aeroporto.csv", row.names = FALSE)
+
 compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv", header = FALSE) %>%
   rename(nome = V1)
+  
+write.csv(compagniaAerea, "./csv/CompagniaAerea.csv", row.names = FALSE)
 
 tratta <- read.csv("./csv/new/tratta_modified.csv", header = FALSE) %>%
   rename(aeroporto_partenza = V1, aeroporto_arrivo = V2) %>%
   slice_sample(n = 50)
+  
+write.csv(tratta, "./csv/Tratta", row.names = FALSE)
 
 tipoDiAeroplano <- read.csv("./csv/TipoDiAeroplano.csv")
 
@@ -152,8 +158,8 @@ write.csv(giorniDellaSettimana_Volo, "./csv/GiornidellaSettimana_Volo.csv", row.
 # Classe di Volo
 # Prodotto cartesiano tra i due dataframe
 classeDiVolo <- expand.grid(classe = classe$priorita, volo = volo$codice)
+classeDiVolo <- unique(classeDiVolo[c("classe", "volo")])
 classeDiVolo$prezzo <- generatePrice(nrow(classeDiVolo))
-#classeDiVolo <- unique(classeDiVolo[c("classe", "volo")])
 write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv", row.names = FALSE)
 
 #Volo Tratta
