@@ -142,7 +142,7 @@ write.csv(volo, "./csv/Volo.csv", row.names = FALSE)
 
 # Giorno Settimana Volo
 giorniDellaSettimana_Volo <- data.frame(matrix(ncol = 0, nrow = 200))
-giorniDellaSettimana_Volo$giorno <- sample(giorniDellaSettimana$nome, size = nrow(giorniDellaSettimana_Volo), replace = TRUE)
+giorniDellaSettimana_Volo$giorno_settimana <- sample(giorniDellaSettimana$nome, size = nrow(giorniDellaSettimana_Volo), replace = TRUE)
 giorniDellaSettimana_Volo$volo <- sample(volo$codice, size = nrow(giorniDellaSettimana_Volo), replace = TRUE)
 write.csv(giorniDellaSettimana_Volo, "./csv/GiornidellaSettimana_Volo.csv", row.names = FALSE)
 
