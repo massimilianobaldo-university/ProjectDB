@@ -86,10 +86,10 @@ CREATE TABLE ClasseDiVolo(
 
 CREATE TABLE Volo(
     codice dom_codice_volo primary key,
-    orario_previsto_partenza time not null,
-    orario_previsto_arrivo time not null,
-    aeroporto_partenza dom_codice_aeroporto not null,
-    aeroporto_arrivo dom_codice_aeroporto not null,
+    orario_previsto_partenza time,
+    orario_previsto_arrivo time,
+    aeroporto_partenza dom_codice_aeroporto,
+    aeroporto_arrivo dom_codice_aeroporto,
     compagnia_aerea dom_compagnia_aerea not null    -- FK: CompagniaAerea.nome
 );
 
