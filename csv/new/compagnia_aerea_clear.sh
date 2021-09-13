@@ -6,7 +6,7 @@ i=1
 old_file=${file}${ext}
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | sed s:\':'\\'\':g | sed s:\":\':g >$new_file
+cat $old_file | sed s:\':'\\'\':g >$new_file
 
 i=$(($i + 1))
 
@@ -23,7 +23,8 @@ rm $old_file
 old_file=$new_file
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | grep \'$ >$new_file
+echo '"nome"' >$new_file
+cat $old_file | grep \"$ | sort | uniq >>$new_file
 
 i=$(($i + 1))
 rm $old_file

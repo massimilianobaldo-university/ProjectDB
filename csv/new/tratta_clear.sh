@@ -23,7 +23,8 @@ rm $old_file
 old_file=$new_file
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | grep ^[A-Z][A-Z][A-Z],[A-Z][A-Z][A-Z]$ >$new_file
+echo 'aeroporto_partenza,aeroporto_arrivo' >$new_file
+cat $old_file | grep ^[A-Z][A-Z][A-Z],[A-Z][A-Z][A-Z]$ >>$new_file
 
 i=$(($i + 1))
 rm $old_file

@@ -33,6 +33,10 @@ CREATE domain dom_codice_volo AS varchar(7)
    CONSTRAINT valid_dom_codice_volo 
    CHECK (value ~ '^V[0-9]+$');
    
+CREATE domain dom_codice_aeroplano AS varchar(7)
+   CONSTRAINT valid_dom_codice_aeroplano 
+   CHECK (value ~ '^AP[0-9]+$');
+   
 -- CREATE domain dom_tipo_aeroplano AS text;
 
 CREATE domain dom_tipo_aeroplano AS varchar(6)
@@ -67,7 +71,7 @@ CREATE TABLE Prenotazione_IstanzaDiTratta(
 CREATE TABLE IstanzaDiTratta(
     tratta dom_codice_tratta,       -- PK, FK: Tratta.id
     data_istanza date,              -- PK
-    aeroplano integer not null,     -- FK: Aeroplano.codice
+    aeroplano dom_codice_aeroplano not null,     -- FK: Aeroplano.codice
     numero_posti_rimanenti integer,
     primary key(tratta, data_istanza)
 );
@@ -116,12 +120,12 @@ CREATE TABLE CompagniaAerea(
 
 CREATE TABLE CompagniaAerea_Aeroplano(
     compagnia_aerea dom_compagnia_aerea,    -- PK, FK: CompagniaAerea.nome
-    aeroplano integer,                      -- PK, FK: Aeroplano.codice
+    aeroplano dom_codice_aeroplano,                      -- PK, FK: Aeroplano.codice
     primary key(compagnia_aerea, aeroplano)
 );
 
 CREATE TABLE Aeroplano(
-    codice integer primary key,
+    codice dom_codice_aeroplano primary key,
     numero_posti integer not null,
     tipo_aeroplano dom_tipo_aeroplano      -- FK: TipoDiAeroplano.nome
 );
@@ -141,9 +145,9 @@ CREATE TABLE PuoDecollare(
 
 CREATE TABLE Aeroporto(
     codice dom_codice_aeroporto primary key,
-    nome varchar(50) not null,
-    citta varchar(50) not null,
-    nazione char(3) not null
+    nome text not null,
+    citta text not null,
+    nazione text not null
 );
 
 CREATE TABLE Tratta(

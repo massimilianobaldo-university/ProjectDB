@@ -122,8 +122,8 @@ write.csv(puoDecollare, "./csv/PuoDecollare.csv", row.names = FALSE)
 
 # Tratta
 tratta$id <- generateUniqueId(nrow(tratta), prefix = "T")
-tratta$orario_partenza <- generateTime(nrow(tratta))
-tratta$orario_previsto_arrivo <- generateSensibleTime(tratta$orario_partenza)
+tratta$orario_previsto_partenza <- generateTime(nrow(tratta))
+tratta$orario_previsto_arrivo <- generateSensibleTime(tratta$orario_previsto_partenza)
 write.csv(tratta, "./csv/Tratta.csv", row.names = FALSE)
 
 # Compagnia Aerea Aereoplano

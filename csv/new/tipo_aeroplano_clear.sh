@@ -6,7 +6,7 @@ i=1
 old_file=${file}${ext}
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | sed s:\':'\\'\':g | sed s:';':\'\;\':g >$new_file
+cat $old_file | sed s:\':'\\'\':g | sed s:';':\"\,\":g >$new_file
 
 i=$(($i + 1))
 
@@ -14,7 +14,8 @@ i=$(($i + 1))
 old_file=$new_file
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | cut -d';' -f2-3 >$new_file
+echo '"nome","azienda_costruttrice"' >$new_file
+cat $old_file | cut -d',' -f2-3 >>$new_file
 
 i=$(($i + 1))
 rm $old_file

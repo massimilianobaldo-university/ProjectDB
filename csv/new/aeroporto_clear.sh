@@ -6,7 +6,7 @@ i=1
 old_file=${file}${ext}
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | sed s:\':'\\'\':g | sed s:\":\':g >$new_file
+cat $old_file | sed s:\':'\\'\':g >$new_file
 
 i=$(($i + 1))
 
@@ -19,11 +19,12 @@ cat $old_file | cut -d',' -f2-5 >$new_file
 i=$(($i + 1))
 rm $old_file
 
-#rimuovere le righe che non terminano con un codice [A-Z]{3-3}
+#rimuovere le righe che non terminano con un codice [A-Z]{3,3}
 old_file=$new_file
 new_file=${file}'_'${i}${ext}
 
-cat $old_file | grep [A-Z][A-Z][A-Z]\'$ >$new_file
+echo '"codice","nome","citta","nazione"' >$new_file
+cat $old_file | grep \"[A-Z][A-Z][A-Z]\"$ >>$new_file
 
 i=$(($i + 1))
 rm $old_file
