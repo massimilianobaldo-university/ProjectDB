@@ -217,11 +217,6 @@ istanzaDiTratta$tratta <- sample(tratta$id, size = nrow(istanzaDiTratta), replac
 istanzaDiTratta$data_istanza <- sample(seq(as.Date('1990/01/01'), as.Date('2021/01/01'), by="day"), size = nrow(istanzaDiTratta), replace = TRUE)
 istanzaDiTratta <- unique(istanzaDiTratta[c("tratta", "data_istanza")])
 istanzaDiTratta$aeroplano <- sample(aeroplano$codice, size = nrow(istanzaDiTratta), replace = TRUE)
-istanzaDiTratta$numero_posti_rimanenti <- 
-  inner_join(istanzaDiTratta, aeroplano, by = c("aeroplano" = "codice")) %>%
-  .$numero_posti %>%
-  map(~ sample(x = (1:.), size = 1)) %>%
-  unlist()
 write.csv(mutate(istanzaDiTratta, data_istanza=as.character(data_istanza)), "./csv/IstanzaDiTratta.csv", row.names = FALSE)
 
 remove(compagniaAerea_Aeroplano, puoDecollare, cliente, aeroporto)
