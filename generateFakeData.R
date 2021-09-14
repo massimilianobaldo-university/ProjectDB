@@ -231,6 +231,7 @@ prenotazione_IstanzaDiTratta$codice_prenotazione <-
     size = nrow(prenotazione_IstanzaDiTratta),
     replace = TRUE
   )
+prenotazione_IstanzaDiTratta <- prenotazione_IstanzaDiTratta %>% unique()
 prenotazione_IstanzaDiTratta$posto_prenotato <-
   inner_join(prenotazione_IstanzaDiTratta,
              istanzaDiTratta,
