@@ -8,25 +8,40 @@ set.seed(285391)
 ## First Step: load the existing data from the directory "./csv"
 
 ## These derive from the cleaning of the previous step
-aeroporto <- read.csv("./csv/new/aeroporto_modified.csv", header = FALSE) %>%
-  rename(nome = V1, citta = V2, nazione = V3, codice = V4)
+# aeroporto <- read.csv("./csv/new/aeroporto_modified.csv", header = FALSE) %>%
+#   rename(nome = V1, citta = V2, nazione = V3, codice = V4)
+
+aeroporto <- read.csv("./old_csv/Aeroporti.csv", header = FALSE) %>%
+  select(2:5) %>%
+  rename(nome = V2, citta = V3, nazione = V4, codice = V5) %>%
+  filter(codice != "\\N") %>%
+  unique()
 
 write.csv(aeroporto, "./csv/Aeroporto.csv", row.names = FALSE)
 
-compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv", header = FALSE) %>%
-  rename(nome = V1)
+# compagniaAerea <- read.csv("./csv/new/compagnia_aerea_modified.csv", header = FALSE) %>%
+#   rename(nome = V1)
+
+compagniaAerea <- read.csv("./old_csv/CompagniaAerea.csv", header = FALSE) %>%
+  select(2) %>%
+  rename(nome = V2) %>%
+  unique()
   
 write.csv(compagniaAerea, "./csv/CompagniaAerea.csv", row.names = FALSE)
 
-tratta <- read.csv("./csv/new/tratta_modified.csv", header = FALSE) %>%
-  rename(aeroporto_partenza = V1, aeroporto_arrivo = V2) %>%
-  slice_sample(n = 50)
-  
-write.csv(tratta, "./csv/Tratta", row.names = FALSE)
+# tratta <- read.csv("./csv/new/tratta_modified.csv", header = FALSE) %>%
+#   rename(aeroporto_partenza = V1, aeroporto_arrivo = V2) %>%
+#   slice_sample(n = 50)
 
-tipoDiAeroplano <- read.csv("./csv/TipoDiAeroplano.csv")
+tratta <- read.csv("./old_csv/Tratta.csv", header = FALSE) %>%
+  select(3, 5) %>%
+  rename(aeroporto_partenza = V3, aeroporto_arrivo = V5) %>%
+  unique() %>%
+  slice_sample(n = 50)
+
 
 ## These are well known
+tipoDiAeroplano <- read.csv("./csv/TipoDiAeroplano.csv")
 giorniDellaSettimana <- read.csv("./csv/GiorniDellaSettimana.csv")
 classe <- read.csv("./csv/ClassePossibile.csv")
 
