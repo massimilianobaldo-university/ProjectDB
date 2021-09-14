@@ -23,7 +23,7 @@ rm $old_file
 old_file=$new_file
 new_file=${file}'_'${i}${ext}
 
-echo '"codice","nome","citta","nazione"' >$new_file
+echo '"nome","citta","nazione","codice"' >$new_file
 cat $old_file | grep \"[A-Z][A-Z][A-Z]\"$ >>$new_file
 
 i=$(($i + 1))
