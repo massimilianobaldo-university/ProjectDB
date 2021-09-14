@@ -21,9 +21,9 @@ CREATE domain dom_codice_tratta AS text
    CONSTRAINT valid_dom_codice_tratta 
    CHECK (value ~ '^T[0-9]+$');
    
-CREATE domain dom_codice_aeroporto AS char(3)
-   CONSTRAINT valid_dom_codice_aeroporto 
-   CHECK (value ~ '^[A-Z]{3,3}$');
+CREATE domain dom_codice_aeroporto AS char(3);
+--   CONSTRAINT valid_dom_codice_aeroporto 
+--   CHECK (value ~ '^[A-Z0-9]{3,3}$');
 
 CREATE domain dom_posto_aereo AS varchar(3)
    CONSTRAINT valid_dom_dom_posto_aereo 
