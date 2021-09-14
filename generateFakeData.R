@@ -36,6 +36,8 @@ write.csv(compagniaAerea, "./csv/CompagniaAerea.csv", row.names = FALSE)
 tratta <- read.csv("./old_csv/Tratta.csv", header = FALSE) %>%
   select(3, 5) %>%
   rename(aeroporto_partenza = V3, aeroporto_arrivo = V5) %>%
+  subset(aeroporto_partenza %in% aeroporto$codice) %>%
+  subset(aeroporto_arrivo %in% aeroporto$codice) %>%
   unique() %>%
   slice_sample(n = 50)
 
