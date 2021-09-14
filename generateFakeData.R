@@ -222,7 +222,7 @@ istanzaDiTratta$numero_posti_rimanenti <-
   .$numero_posti %>%
   map(~ sample(x = (1:.), size = 1)) %>%
   unlist()
-write.csv(istanzaDiTratta, "./csv/IstanzaDiTratta.csv", row.names = FALSE)
+write.csv(mutate(istanzaDiTratta, data_istanza=as.character(data_istanza)), "./csv/IstanzaDiTratta.csv", row.names = FALSE)
 
 remove(compagniaAerea_Aeroplano, puoDecollare, cliente, aeroporto)
 
@@ -249,4 +249,6 @@ prenotazione_IstanzaDiTratta$posto_prenotato <-
   })
 colnames(prenotazione_IstanzaDiTratta)[2] <- "data_istanza_tratta"
        
-write.csv(as.matrix(prenotazione_IstanzaDiTratta), "./csv/Prenotazione_IstanzaDiTratta.csv", row.names = FALSE)
+write.csv(prenotazione_IstanzaDiTratta %>%
+            mutate(data_istanza_tratta = as.character(data_istanza_tratta)) %>%
+            as.matrix(), "./csv/Prenotazione_IstanzaDiTratta.csv", row.names = FALSE)
