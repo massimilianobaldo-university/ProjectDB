@@ -26,18 +26,19 @@ join aeroplano as A on (
 order by data_istanza, perc_occup_aereo;
 
 -- 2) Percentuale di occupazione degli aerei per anno
+-- tolto perchè la media è 17% tutti gli anni
 
-select 
-    date_trunc('year', data_istanza) as year,
-    sum(perc_occup_aereo) as perc_posti_per_istanza, 
-    count(*) as num_istanze_per_anno,
-    trunc((sum(perc_occup_aereo)::decimal / count(*)), 4) as perc_occupazione_media
-from posti_rimanenti_info
-where data_istanza < '2021-01-01'
-group by year
-order by year;
+--select 
+--    date_trunc('year', data_istanza) as year,
+--    sum(perc_occup_aereo) as perc_posti_per_istanza, 
+--    count(*) as num_istanze_per_anno,
+--    trunc((sum(perc_occup_aereo)::decimal / count(*)), 4) as perc_occupazione_media
+--from posti_rimanenti_info
+--where data_istanza < '2021-01-01'
+--group by year
+--order by year;
 
-
+-- 2) Percentuale di occupazione degli aerei
 select 
     trunc(perc_occup_aereo, 2) as perc_occupazione_aereo, 
     count(trunc(perc_occup_aereo, 2)) as numero_aerei
@@ -46,8 +47,12 @@ group by perc_occupazione_aereo
 order by perc_occupazione_aereo;
 
 
-
--- 3) Percentuale media di occupazione degli aerei
+-- 3) Tipo di aeroplani più utilizzati
+select a.tipo_aeroplano, count(*) as numero_tipi
+from istanzaditratta idt 
+join aeroplano a on a.codice = idt.aeroplano 
+group by tipo_aeroplano
+order by numero_tipi;
 
 -- 4) Le compagnie aeree più economiche
 create view prezzi_voli_compagnia_aerea(volo, classe, prezzo, compagnia_aerea)

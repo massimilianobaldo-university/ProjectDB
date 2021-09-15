@@ -19,7 +19,7 @@ con <- dbConnect(
   host = "127.0.0.1",
   port = 5433, # usually 5432
   user = "postgres",
-  password = "######"
+  password = "667l3"
 )
 
 #not working because of FK dependencies

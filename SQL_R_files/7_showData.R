@@ -2,7 +2,6 @@ library(DBI)
 library(tidyverse)
 #library(ggplot2) #inside tidyverse
 library(RPostgreSQL)
-library(dplyr)
 
 # windows command:
 # C:\pgsql\bin\psql.exe -h 127.0.0.1 -p 5433 -U postgres -d progettobasididatidb
@@ -15,7 +14,7 @@ con <- dbConnect(
   host = "127.0.0.1",
   port = 5433, # usually 5432
   user = "postgres",
-  password = "#######"
+  password = "667l3"
 )
 
 #example
@@ -47,7 +46,8 @@ ggplot(
     title = "Numero di voli per giorno della settimana", 
     x = "Giorno della settimana", 
     y = "Numero di voli"
-  )
+  ) +
+  guides(fill=guide_legend(title="Numero di voli"))
 
 ggsave(
   filename = "1_giorno_settimana_con_piu_voli.png",
@@ -84,7 +84,7 @@ ggplot(
   geom_point() +
   labs(
     title = "Percentuale di occupazione degli aerei", 
-    x = "Percentuale occupazione aereo", 
+    x = "Percentuale occupazione dell'aereo", 
     y = "Numero di aerei"
   )
 
@@ -95,6 +95,31 @@ ggsave(
 #######################################################################
 
 #3) 
+
+tipi_aeroplano_piu_utilizzati_query <- "select a.tipo_aeroplano, count(*) as numero_tipi from istanzaditratta idt join aeroplano a on a.codice = idt.aeroplano group by tipo_aeroplano order by numero_tipi;"
+tipi_aeroplano_piu_utilizzati_df <- dbGetQuery(con, tipi_aeroplano_piu_utilizzati_query)
+
+
+ggplot(
+    data = tipi_aeroplano_piu_utilizzati_df, 
+    aes(x = reorder(tipo_aeroplano, -numero_tipi), y = numero_tipi, fill = tipo_aeroplano)
+  ) +
+  geom_segment( aes(xend=tipo_aeroplano, yend=0)) +
+  geom_point( size=4, color="orange") +
+  labs(
+    title = "Tipologie di aeroplani più utilizzate", 
+    x = "Tipo di Aeroplano", 
+    y = "Numero di Tipi"
+  ) +
+  etichette_asse_x_diagonale + 
+  guides(fill="none")
+
+#guides(fill=guide_legend(ncol=2)) +
+
+ggsave(
+  filename = "3_tipi_aeroplano_piu_utilizzati.png",
+  path = graphs_path
+)
 
 ########################################################################
 

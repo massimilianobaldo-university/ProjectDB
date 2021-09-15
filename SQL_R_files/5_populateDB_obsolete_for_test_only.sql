@@ -1,3 +1,4 @@
+
 -- connect to db
 \c progettobasididatidb;
 
