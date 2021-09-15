@@ -1,8 +1,8 @@
 library(DBI)
+library(RPostgreSQL)
 library(tidyverse)
 #library(ggplot2) #inside tidyverse
-library(RPostgreSQL)
-library(dplyr)
+#library(dplyr) #inside tidyverse
 
 # windows command:
 # C:\pgsql\bin\psql.exe -h 127.0.0.1 -p 5433 -U postgres -d progettobasididatidb
@@ -19,7 +19,7 @@ con <- dbConnect(
   host = "127.0.0.1",
   port = 5433, # usually 5432
   user = "postgres",
-  password = "667l3"
+  password = "#########################"
 )
 
 #not working because of FK dependencies
