@@ -8,8 +8,9 @@ select
 from giornidellasettimana_volo
 group by giorno_settimana;
 
--- 2) Numero medio di passeggeri nei voli
-create view posti_rimanenti_info(tratta, data_istanza, num_posti_totali, num_posti_rimanenti, num_posti_prenotati, perc_posti_prenotati)
+-- view utile pe 2) e 3)
+
+create view posti_rimanenti_info(tratta, data_istanza, num_posti_totali, num_posti_rimanenti, num_posti_prenotati, perc_occup_aereo)
 as
 select 
     IT.tratta, 
@@ -17,12 +18,34 @@ select
     A.numero_posti as num_posti_totali, 
     IT.numero_posti_rimanenti as num_posti_rimanenti,
     (A.numero_posti - IT.numero_posti_rimanenti) as num_posti_prenotati, 
-    trunc(((A.numero_posti - IT.numero_posti_rimanenti)::decimal / A.numero_posti), 4) as perc_posti_prenotati
+    trunc(((A.numero_posti - IT.numero_posti_rimanenti)::decimal / A.numero_posti), 4) as perc_occup_aereo
 from istanzaditratta as IT
 join aeroplano as A on (
     IT.aeroplano = A.codice
 )
-order by data_istanza, perc_posti_prenotati;
+order by data_istanza, perc_occup_aereo;
+
+-- 2) Percentuale di occupazione degli aerei per anno
+
+select 
+    date_trunc('year', data_istanza) as year,
+    sum(perc_occup_aereo) as perc_posti_per_istanza, 
+    count(*) as num_istanze_per_anno,
+    trunc((sum(perc_occup_aereo)::decimal / count(*)), 4) as perc_occupazione_media
+from posti_rimanenti_info
+where data_istanza < '2021-01-01'
+group by year
+order by year;
+
+
+select 
+    trunc(perc_occup_aereo, 2) as perc_occupazione_aereo, 
+    count(trunc(perc_occup_aereo, 2)) as numero_aerei
+from posti_rimanenti_info
+group by perc_occupazione_aereo
+order by perc_occupazione_aereo;
+
+
 
 -- 3) Percentuale media di occupazione degli aerei
 
@@ -33,14 +56,13 @@ select volo, classe, prezzo, compagnia_aerea
 from ClasseDiVolo CV
 join Volo V on CV.volo = V.codice;
 
-select 
-    sum(prezzo) as costo_totale, 
-    (count(*)/3) as numero_voli, 
+select
     trunc(((sum(prezzo))::decimal / ((count(*)/3))), 2) as costo_medio,
     compagnia_aerea
 from prezzi_voli_compagnia_aerea
 group by compagnia_aerea
-order by costo_medio desc;
+order by costo_medio asc
+limit 50;
 
 
 

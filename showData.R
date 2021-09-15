@@ -14,12 +14,18 @@ con <- dbConnect(
   dbname = "progettobasididatidb",
   host = "127.0.0.1",
   port = 5433, # usually 5432
-  user = "noob",
-  password = "in_chiaro"
+  user = "postgres",
+  password = "#######"
 )
 
 #example
 #aeroporto <- dbGetQuery(con, "select * from aeroporto;")
+
+etichette_asse_x_diagonale <- theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)
+  )
+
+graphs_path = "./graphs/"
 
 #########################################################
 
@@ -28,37 +34,97 @@ con <- dbConnect(
 #eseguire prima in postgres il file:
 #5_functions.sql (per creare la view conta_numero_voli_per_giorno_settimana)
 
-query = "SELECT * FROM conta_numero_voli_per_giorno_settimana"
-giornisettimana_volo_count <- dbGetQuery(con, query)
-
-#query = "SELECT * FROM conta_numero_voli_per_giorno_settimana WHERE numero_voli = ( SELECT MAX(numero_voli) FROM conta_numero_voli_per_giorno_settimana )"
-#giornisettimana_volo_count_max <- dbGetQuery(con, query)
+giornisettimana_volo_count_query = "SELECT * FROM conta_numero_voli_per_giorno_settimana"
+giornisettimana_volo_count_df <- dbGetQuery(con, giornisettimana_volo_count_query)
 
 #bar plot con voli per giorni settimana
-ggplot(data = giornisettimana_volo_count, aes(x = giorno_settimana, y = numero_voli)) + 
-  geom_bar(stat = "identity")
+ggplot(
+    data = giornisettimana_volo_count_df, 
+    aes(x = giorno_settimana, y = numero_voli, fill = numero_voli)
+  ) + 
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Numero di voli per giorno della settimana", 
+    x = "Giorno della settimana", 
+    y = "Numero di voli"
+  )
 
+ggsave(
+  filename = "1_giorno_settimana_con_piu_voli.png",
+  path = graphs_path
+  )
 ################################################################
 
-#2) numero medio di passeggeri nei voli
-query = "SELECT * FROM posti_rimanenti_info"
-prenotazioni_info <- dbGetQuery(con, query)
-
-#combine due columns partial keys to one column primary key
-prenotazioni_info$id_istanza <- paste(prenotazioni_info$tratta, prenotazioni_info$data_istanza)
-
-ggplot(data = prenotazioni_info, aes(x = id_istanza, y = num_posti_prenotati)) + 
-  geom_bar(stat = "identity")
-
-ggplot(data = prenotazioni_info, aes(x = id_istanza, y = num_posti_prenotati)) +
-  geom_point() + 
-    geom_smooth() #stat = 'smooth', color = 'Red', method = 'gam'
+# #2) numero medio di passeggeri nei voli
+# query = "SELECT * FROM posti_rimanenti_info"
+# prenotazioni_info <- dbGetQuery(con, query)
+# 
+# #combine due columns partial keys to one column primary key
+# prenotazioni_info$id_istanza <- paste(prenotazioni_info$tratta, prenotazioni_info$data_istanza)
+# 
+# ggplot(data = prenotazioni_info, aes(x = id_istanza, y = num_posti_prenotati)) + 
+#   geom_bar(stat = "identity")
+# 
+# ggplot(data = prenotazioni_info, aes(x = id_istanza, y = num_posti_prenotati)) +
+#   geom_point() + 
+#     geom_smooth() #stat = 'smooth', color = 'Red', method = 'gam'
 
 
 ##############################################################################
 
+#2) Percentuale di occupazione degli aerei
+
+percentuale_occupazione_aerei_df_query = "select trunc(perc_occup_aereo, 2) as perc_occupazione_aereo, count(trunc(perc_occup_aereo, 2)) as numero_aerei from posti_rimanenti_info group by perc_occupazione_aereo order by perc_occupazione_aereo;"
+percentuale_occupazione_aerei_df <- dbGetQuery(con, percentuale_occupazione_aerei_df_query)
+
+ggplot(
+    data = percentuale_occupazione_aerei_df, 
+    aes(x = perc_occupazione_aereo, y = numero_aerei)
+  ) +
+  geom_point() +
+  labs(
+    title = "Percentuale di occupazione degli aerei", 
+    x = "Percentuale occupazione aereo", 
+    y = "Numero di aerei"
+  )
+
+ggsave(
+  filename = "2_percentuale_occupazione_aerei.png",
+  path = graphs_path
+)
+#######################################################################
+
 #3) 
 
+########################################################################
 
+#4) Le compagnie aeree più economiche
+
+
+compagnia_aeree_economiche_query = "select trunc(((sum(prezzo))::decimal / ((count(*)/3))), 2) as costo_medio, compagnia_aerea from prezzi_voli_compagnia_aerea group by compagnia_aerea order by costo_medio asc limit 10;"
+compagnia_aeree_economiche_df <- dbGetQuery(con, compagnia_aeree_economiche_query)
+
+ggplot(
+    data = compagnia_aeree_economiche_df, 
+    aes(x = reorder(compagnia_aerea, +costo_medio), y = costo_medio, fill = compagnia_aerea)
+  ) +
+  geom_bar(stat = "identity") +
+  etichette_asse_x_diagonale +
+  labs(
+    title = "Compagnie aeree più economiche", 
+    x = "Compagnia Aerea", 
+    y = "Costo Medio"
+  ) + 
+  guides(fill="none")
+
+
+ggsave(
+  filename = "4_compagnia_aeree_piu_economiche.png",
+  path = graphs_path
+)
+
+#########################################
+
+#end
 
 dbDisconnect(con)

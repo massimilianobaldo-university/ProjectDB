@@ -18,8 +18,8 @@ con <- dbConnect(
   dbname = "progettobasididatidb",
   host = "127.0.0.1",
   port = 5433, # usually 5432
-  user = "?????????????????",
-  password = "?????????????????"
+  user = "postgres",
+  password = "######"
 )
 
 #not working because of FK dependencies
@@ -58,11 +58,11 @@ tables <- c(
 lapply(tables, function(x) {
     file_csv <- paste(x, extension, sep = ".")
     df <- read.csv(file_csv, header=TRUE)
+    print(paste("Running: ", x))
     dbWriteTable(con, x, value=df, row.names=FALSE, append=TRUE)
 })
 
-
-#table <- "prenotazione"
+#table <- "aeroporto"
 #file_csv <- paste(table, extension, sep = ".")
 #df <- read.csv(file_csv, header=TRUE)
 #dbWriteTable(con, table, value=df, row.names=FALSE, append=TRUE)
