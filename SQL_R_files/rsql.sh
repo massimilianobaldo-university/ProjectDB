@@ -7,6 +7,7 @@
 
 user='postgres'
 db='progettobasididatidb'
+port=5432
 
 # Parse command line
 while [[ -n $1 ]]; do
@@ -25,6 +26,10 @@ while [[ -n $1 ]]; do
       db=$2;
       shift;
       ;;
+    -p | --port)
+      port=$2;
+      shift;
+      ;;
     -* | --*)
       echo Unknow flas;
       ;;
@@ -37,7 +42,7 @@ done
 
 
 if [[ $user != 'postgres' || $db != 'progettobasididatidb' ]]; then
-    psql -U $user -d $db -a -f $fileSQL
+    psql -U $user -d $db -p $port -a -f $fileSQL
 else 
     psql -U $user -a -f $fileSQL
 fi
