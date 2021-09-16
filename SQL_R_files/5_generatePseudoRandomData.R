@@ -182,16 +182,20 @@ write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv", row.names = FALSE)
 
 # Volo Tratta
 # 150= (50% voli: 1 volo -> 1 tratta = n_voli / 2 = 50) + (50% voli: 1 volo -> 2 tratta = n_voli / 2 * 2 = 100)
+
+#meta dei voli hanno solo una tratta
 voloTratta1 <- data.frame(matrix(ncol = 0, nrow = 50))
 voloTratta1$volo <- sample(volo$codice, size = nrow(voloTratta1))
 voloTratta1$tratta <- sample(tratta$id, size = nrow(voloTratta1))
 voloTratta1$numero_progressivo <- rep(1)
 
+#nell'altra meta dei voli cerchiamo se possono avere due tratte (dai dati generati)
 voloTratta2 <- anti_join(volo, voloTratta1, by = c("codice" = "volo")) %>% subset(select = -c(compagnia_aerea))
 voloTratta2$tratta <- sample(tratta$id, size = nrow(voloTratta2))
 voloTratta2$numero_progressivo <- rep(1)
 
-## Trovo delle tratte per le quali l'aeroporto di arrivo è anche aereoporto di partenza
+# Trovo delle tratte per le quali l'aeroporto di arrivo è anche aereoporto di partenza
+# per tutte le possibili combinazioni accettabili segnamo la tratta come seconda
 secondaTratta <- inner_join(voloTratta2, tratta, by = c("tratta" = "id")) %>%
   inner_join(tratta, by = c("aeroporto_arrivo" = "aeroporto_partenza")) %>%
   select(codice, id, numero_progressivo) %>%
@@ -243,8 +247,8 @@ write.csv(mutate(istanzaDiTratta, data_istanza=as.character(data_istanza)), "./c
 remove(compagniaAerea_Aeroplano, puoDecollare, cliente, aeroporto)
 
 # Prenotazione istanza di tratta
-# Bisogna controllare che le date delle tratte siano corrette (ovvero siano presenti
-# in istanza di tratta)
+# Bisogna controllare che le date delle tratte siano corrette 
+# (ovvero siano presenti in istanza di tratta)
 
 prenotazione_IstanzaDiTratta <- inner_join(prenotazione[c("codice", "volo")], 
                                            voloTratta, by = "volo") 
@@ -255,7 +259,7 @@ primeTratte <- prenotazione_IstanzaDiTratta %>%
 trattePossibili <- tratta$id %>% as.list()
 
 # Lista di vettori che ha come nomi i valori delle tratte
-# Permette un accesso più rapido alle possibili date ti una tratta specifica
+# Permette un accesso più rapido alle sole date accettabili di una tratta specifica
 dateTrattePossibili <- trattePossibili %>%
   setNames(as.character(trattePossibili)) %>%
   lapply(., function(x) {
