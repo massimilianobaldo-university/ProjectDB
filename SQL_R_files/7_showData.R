@@ -109,7 +109,7 @@ ggplot(
   labs(
     title = "Tipologie di aeroplani più utilizzate", 
     x = "Tipo di Aeroplano", 
-    y = "Numero di Tipi"
+    y = "Numero di Utilizzi"
   ) +
   etichette_asse_x_diagonale + 
   guides(fill="none")
@@ -126,7 +126,7 @@ ggsave(
 #4) Le compagnie aeree più economiche
 
 
-compagnia_aeree_economiche_query = "select trunc(((sum(prezzo))::decimal / ((count(*)/3))), 2) as costo_medio, compagnia_aerea from prezzi_voli_compagnia_aerea group by compagnia_aerea order by costo_medio asc limit 10;"
+compagnia_aeree_economiche_query = "select trunc(((sum(prezzo))::decimal / count(*)), 2) as costo_medio, compagnia_aerea from prezzi_voli_compagnia_aerea group by compagnia_aerea order by costo_medio asc limit 10;"
 compagnia_aeree_economiche_df <- dbGetQuery(con, compagnia_aeree_economiche_query)
 
 ggplot(
