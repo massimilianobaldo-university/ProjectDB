@@ -46,3 +46,6 @@ po/*~
 
 # other people work
 *.pdf
+
+# R history files
+*.Rhistory
