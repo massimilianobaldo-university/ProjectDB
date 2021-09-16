@@ -1,6 +1,7 @@
 # RScript per la generazione di dati in formato csv
 
-library(tidyverse)
+library(tidyverse, warn.conflicts = FALSE)
+library(lubridate)
 library(charlatan)
 
 set.seed(285391)
@@ -221,6 +222,8 @@ istanzaDiTratta$tratta <- sample(tratta$id, size = nrow(istanzaDiTratta), replac
 istanzaDiTratta$data_istanza <- sample(seq(as.Date('1990/01/01'), as.Date('2021/01/01'), by="day"), size = nrow(istanzaDiTratta), replace = TRUE)
 istanzaDiTratta <- unique(istanzaDiTratta[c("tratta", "data_istanza")])
 
+# Se una tratta è uno scalo, deve poter avvenire negli stessi giorni della tratta
+# a cui fa capo.
 istanzaDiTratta <- voloTratta %>%
   filter(numero_progressivo == 2) %>%
   inner_join(voloTratta %>%
@@ -240,41 +243,40 @@ write.csv(mutate(istanzaDiTratta, data_istanza=as.character(data_istanza)), "./c
 remove(compagniaAerea_Aeroplano, puoDecollare, cliente, aeroporto)
 
 # Prenotazione istanza di tratta
+# Bisogna controllare che le date delle tratte siano corrette (ovvero siano presenti
+# in istanza di tratta)
 
 prenotazione_IstanzaDiTratta <- inner_join(prenotazione[c("codice", "volo")], 
                                            voloTratta, by = "volo") 
 
-pit2 <- prenotazione_IstanzaDiTratta %>%
+primeTratte <- prenotazione_IstanzaDiTratta %>%
   filter(numero_progressivo == 1)
 
-singleValues <- tratta$id %>% as.list()
+trattePossibili <- tratta$id %>% as.list()
 
-t3 <- singleValues %>%
-  setNames(as.character(singleValues)) %>%
+# Lista di vettori che ha come nomi i valori delle tratte
+# Permette un accesso più rapido alle possibili date ti una tratta specifica
+dateTrattePossibili <- trattePossibili %>%
+  setNames(as.character(trattePossibili)) %>%
   lapply(., function(x) {
     istanzaDiTratta %>%
       filter(tratta == x) %>%
       pull(data_istanza)
   })
 
-pit2$data_istanza <- lapply(pit2$tratta, function(x) {
-  sample(t3[[x]], size = 1)
+primeTratte$data_istanza <- lapply(primeTratte$tratta, function(x) {
+  sample(dateTrattePossibili[[x]], size = 1)
 }) %>% unlist()
 
-# pit2 <- pit2 %>% mutate(data_istanza = as_date(data_istanza)) %>%
-#   filter(tratta == "T33")
-# 
-# pit3 <- pit2 %>% filter(data_istanza %in% t3[["T33"]])
 
+secondeTratte <- prenotazione_IstanzaDiTratta %>% filter(numero_progressivo >= 2) %>%
+  inner_join(select(primeTratte, data_istanza, codice), by = "codice")
 
-
-t5 <- prenotazione_IstanzaDiTratta %>% filter(numero_progressivo >= 2) %>%
-  inner_join(select(pit2, data_istanza, codice), by = "codice")
-
-prenotazione_IstanzaDiTratta <- rbind(pit2,t5) %>%
+prenotazione_IstanzaDiTratta <- rbind(primeTratte, secondeTratte) %>%
   select(codice, tratta, data_istanza) %>%
   mutate(data_istanza =  as_date(data_istanza))
 
+remove(primeTratte, secondeTratte, dateTrattePossibili)
 
 prenotazione_IstanzaDiTratta$posto_prenotato <-
   inner_join(
@@ -290,7 +292,10 @@ prenotazione_IstanzaDiTratta$posto_prenotato <-
     v <- sample((1:v), size = 1)
   })
 
-colnames(prenotazione_IstanzaDiTratta)[2] <- "data_istanza_tratta"
+colnames(prenotazione_IstanzaDiTratta) <- c("codice_prenotazione",
+                                            "tratta",
+                                            "data_istanza_tratta",
+                                            "posto_prenotato")
        
 write.csv(prenotazione_IstanzaDiTratta %>%
             mutate(data_istanza_tratta = as.character(data_istanza_tratta)) %>%
