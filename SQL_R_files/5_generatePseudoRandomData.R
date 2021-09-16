@@ -220,26 +220,67 @@ istanzaDiTratta <- data.frame(matrix(ncol = 0, nrow = 160000))
 istanzaDiTratta$tratta <- sample(tratta$id, size = nrow(istanzaDiTratta), replace = TRUE)
 istanzaDiTratta$data_istanza <- sample(seq(as.Date('1990/01/01'), as.Date('2021/01/01'), by="day"), size = nrow(istanzaDiTratta), replace = TRUE)
 istanzaDiTratta <- unique(istanzaDiTratta[c("tratta", "data_istanza")])
+
+istanzaDiTratta <- voloTratta %>%
+  filter(numero_progressivo == 2) %>%
+  inner_join(voloTratta %>%
+               filter(numero_progressivo == 1),
+             by = "volo") %>%
+  inner_join(select(istanzaDiTratta, tratta, data_istanza),
+             by = c("tratta.y" = "tratta")) %>%
+  select(tratta.x, data_istanza) %>%
+  rename(tratta = tratta.x) %>%
+  rbind(istanzaDiTratta)
+
+
 istanzaDiTratta$aeroplano <- sample(aeroplano$codice, size = nrow(istanzaDiTratta), replace = TRUE)
 write.csv(mutate(istanzaDiTratta, data_istanza=as.character(data_istanza)), "./csv/IstanzaDiTratta.csv", row.names = FALSE)
 
 remove(compagniaAerea_Aeroplano, puoDecollare, cliente, aeroporto)
 
 # Prenotazione istanza di tratta
-# Si estrapolano le righe in modo che siano consistenti i valori estraplati
-prenotazione_IstanzaDiTratta <-
-  istanzaDiTratta[sample(row.names(istanzaDiTratta), 1500000, replace = TRUE), c("tratta", "data_istanza")]
-prenotazione_IstanzaDiTratta$codice_prenotazione <-
-  sample(
-    prenotazione$codice,
-    size = nrow(prenotazione_IstanzaDiTratta),
-    replace = TRUE
-  )
-prenotazione_IstanzaDiTratta <- prenotazione_IstanzaDiTratta %>% unique()
+
+prenotazione_IstanzaDiTratta <- inner_join(prenotazione[c("codice", "volo")], 
+                                           voloTratta, by = "volo") 
+
+pit2 <- prenotazione_IstanzaDiTratta %>%
+  filter(numero_progressivo == 1)
+
+singleValues <- tratta$id %>% as.list()
+
+t3 <- singleValues %>%
+  setNames(as.character(singleValues)) %>%
+  lapply(., function(x) {
+    istanzaDiTratta %>%
+      filter(tratta == x) %>%
+      pull(data_istanza)
+  })
+
+pit2$data_istanza <- lapply(pit2$tratta, function(x) {
+  sample(t3[[x]], size = 1)
+}) %>% unlist()
+
+# pit2 <- pit2 %>% mutate(data_istanza = as_date(data_istanza)) %>%
+#   filter(tratta == "T33")
+# 
+# pit3 <- pit2 %>% filter(data_istanza %in% t3[["T33"]])
+
+
+
+t5 <- prenotazione_IstanzaDiTratta %>% filter(numero_progressivo >= 2) %>%
+  inner_join(select(pit2, data_istanza, codice), by = "codice")
+
+prenotazione_IstanzaDiTratta <- rbind(pit2,t5) %>%
+  select(codice, tratta, data_istanza) %>%
+  mutate(data_istanza =  as_date(data_istanza))
+
+
 prenotazione_IstanzaDiTratta$posto_prenotato <-
-  inner_join(prenotazione_IstanzaDiTratta,
-             istanzaDiTratta,
-             by = c("tratta" = "tratta", "data_istanza" = "data_istanza")) %>%
+  inner_join(
+    prenotazione_IstanzaDiTratta,
+    istanzaDiTratta,
+    by = c("tratta" = "tratta", "data_istanza" = "data_istanza")
+  ) %>%
   select(aeroplano) %>%
   inner_join(aeroplano, by = c("aeroplano" = "codice")) %>%
   select(numero_posti) %>%
@@ -247,6 +288,7 @@ prenotazione_IstanzaDiTratta$posto_prenotato <-
   lapply(., function(v) {
     v <- sample((1:v), size = 1)
   })
+
 colnames(prenotazione_IstanzaDiTratta)[2] <- "data_istanza_tratta"
        
 write.csv(prenotazione_IstanzaDiTratta %>%
