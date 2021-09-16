@@ -232,6 +232,7 @@ istanzaDiTratta <- voloTratta %>%
   rename(tratta = tratta.x) %>%
   rbind(istanzaDiTratta)
 
+istanzaDiTratta <- unique(istanzaDiTratta[c("tratta", "data_istanza")])
 
 istanzaDiTratta$aeroplano <- sample(aeroplano$codice, size = nrow(istanzaDiTratta), replace = TRUE)
 write.csv(mutate(istanzaDiTratta, data_istanza=as.character(data_istanza)), "./csv/IstanzaDiTratta.csv", row.names = FALSE)
