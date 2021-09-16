@@ -149,6 +149,11 @@ compagniaAerea_Aeroplano <- unique(compagniaAerea_Aeroplano[c("compagnia_aerea",
 write.csv(compagniaAerea_Aeroplano, "./csv/CompagniaAerea_Aeroplano.csv", row.names = FALSE)
 
 # Clienti
+# 33.000 = prenotazione = 1.000.000 
+# / 1,5 (num_tratte_per_volo) 
+# / 2 (andata e ritorno) 
+# / 10 (10 voli A+R comprati in 20 anni dallo stesso cliente)
+# Si è scleto di arrotondare a 30.000 per motivi di computazione
 cliente <- ch_generate('name', 'phone_number', n = 30000, locale = "it_IT")
 colnames(cliente) <- c("nome","telefono")
 cliente$nome <- gsub(pattern = "Sig. |Sig.ra |Dott. ", replacement = "", x = cliente$nome)
@@ -183,13 +188,13 @@ write.csv(classeDiVolo, "./csv/ClasseDiVolo.csv", row.names = FALSE)
 # Volo Tratta
 # 150= (50% voli: 1 volo -> 1 tratta = n_voli / 2 = 50) + (50% voli: 1 volo -> 2 tratta = n_voli / 2 * 2 = 100)
 
-#meta dei voli hanno solo una tratta
+# metà dei voli hanno solo una tratta
 voloTratta1 <- data.frame(matrix(ncol = 0, nrow = 50))
 voloTratta1$volo <- sample(volo$codice, size = nrow(voloTratta1))
 voloTratta1$tratta <- sample(tratta$id, size = nrow(voloTratta1))
 voloTratta1$numero_progressivo <- rep(1)
 
-#nell'altra meta dei voli cerchiamo se possono avere due tratte (dai dati generati)
+# nell'altra metà dei voli cerchiamo se possono avere due tratte (dai dati generati)
 voloTratta2 <- anti_join(volo, voloTratta1, by = c("codice" = "volo")) %>% subset(select = -c(compagnia_aerea))
 voloTratta2$tratta <- sample(tratta$id, size = nrow(voloTratta2))
 voloTratta2$numero_progressivo <- rep(1)
