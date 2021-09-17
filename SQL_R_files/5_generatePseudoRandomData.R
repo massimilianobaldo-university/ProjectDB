@@ -55,8 +55,8 @@ generateId <- function(n=1, format="##") {
   (x <- BaseProvider$new())
   tmpVec = character(n)
   
-  # substitute new Id for all the elements and
-  # uppercase all the alfa-character
+  # sostituire con un nuovo Id per tutti gli elementi e
+  # trasfromare in maiscolo tutti i caratteri alfabetici
   result <- lapply(tmpVec, function(v) {
       v <- x$bothify(format)
       if(is.character(v))
