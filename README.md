@@ -25,21 +25,26 @@ classe abbiano tutti lo stesso prezzo).
 di scali intermedi), ciascuna identificata da un numero progressivo (prima tratta del volo, seconda
 tratta del volo, ..). Ogni tratta sia caratterizzata da un aeroporto di partenza, un aeroporto di
 arrivo, un orario previsto di partenza e un orario previsto di arrivo.
-- Per ogni specifica istanza di tratta, la data in cui avr`a luogo (ad esempio, la tratta Trieste-Monaco del
+- Per ogni specifica istanza di tratta, la data in cui avrà luogo (ad esempio, la tratta Trieste-Monaco del
 25 febbraio 2012), l’aeroplano utilizzato (si assuma che su una stessa tratta possano essere utilizzati
 in date diverse aeroplani diversi) e il numero di posti ancora disponibili.
-- Ogni prenotazione relativa ad una certa istanza di tratta sia identificata dal posto prenotato (numero pi`u lettera; ad esempio, posto 16D) e sia caratterizzata dal nome, dal cognome e dal recapito
+- Ogni prenotazione relativa ad una certa istanza di tratta sia identificata dal posto prenotato (numero più lettera; ad esempio, posto 16D) e sia caratterizzata dal nome, dal cognome e dal recapito
 telefonico della persona che ha prenotato il posto.
 
 ## TODO
 
 The design should consist of the following steps:
 
-- [ ] Collection and analysis of requirements,
-- [ ] Conceptual design,
-- [ ] Logical design,
-- [ ] Physical design,
-- [ ] Implementation,
-- [ ] Data analysis in R.
+- [x] Collection and analysis of requirements,
+- [x] Conceptual design,
+- [x] Logical design,
+- [x] Physical design,
+- [x] Implementation,
+- [x] Data analysis in R.
 
 NB: The description of the problem should be enriched, if necessary, in order to include all (or almost all) of the constructs treated during the course.
+
+## Use of repository
+You can read the final essay under the file called "report.pdf".
+All the instrucions are described in that file, so follow setp by step evrey point to replicate the database.
+Moreover, there is a docker-compose file which is a empty Postgres database, it can be usfuel.
